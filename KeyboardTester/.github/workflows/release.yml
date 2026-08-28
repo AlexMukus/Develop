@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # нужна полная история для changelog
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal
+
+      - name: Publish portable
+        run: dotnet publish src/KeyboardTester.UI/KeyboardTester.UI.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish
+
+      - name: Create portable ZIP
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME
+          Compress-Archive -Path ./publish/* -DestinationPath "./KeyboardTester-$version-win-x64.zip"
+
+      - name: Generate changelog
+        shell: pwsh
+        run: |
+          $current = $env:GITHUB_REF_NAME
+          $prev = git tag --sort=-version:refname | Where-Object { $_ -ne $current } | Select-Object -First 1
+          if ($prev) {
+            $header = "## Изменения $prev → $current"
+            $range = "$prev..$current"
+          } else {
+            $header = "## Изменения в $current"
+            $range = $current
+          }
+          $commits = git log --pretty=format:"- %s (%h)" $range
+          "$header`n`n$commits" | Out-File -FilePath changelog.md -Encoding utf8
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: KeyboardTester ${{ github.ref_name }}
+          body_path: changelog.md
+          files: ./KeyboardTester-*.zip

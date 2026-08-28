@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Общие -->
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <!-- Infrastructure -->
+    <PackageVersion Include="Serilog" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="QuestPDF" Version="2024.10.2" />
+    <!-- UI -->
+    <PackageVersion Include="LiveCharts2" Version="2.0.0-rc2" />
+    <PackageVersion Include="LiveCharts2.Wpf" Version="2.0.0-rc2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.0" />
+    <!-- Тесты -->
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
+    <PackageVersion Include="Moq" Version="4.20.0" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+</Project>

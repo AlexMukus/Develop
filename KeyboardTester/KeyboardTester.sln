@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F6151076-9B78-41F5-8306-6658751CC4F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.Core", "src\KeyboardTester.Core\KeyboardTester.Core.csproj", "{D2F1E6B2-8595-470E-8FDB-4D62B9305D20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.Infrastructure", "src\KeyboardTester.Infrastructure\KeyboardTester.Infrastructure.csproj", "{6870FC1A-186A-4E48-94C6-6EA069C30EFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.Application", "src\KeyboardTester.Application\KeyboardTester.Application.csproj", "{FC7112AE-C1FC-4B06-A033-BA07F760D2CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.UI", "src\KeyboardTester.UI\KeyboardTester.UI.csproj", "{64835F88-5A61-4034-8930-A38BADF2CAD2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{39B6101D-F28F-4ADE-8ABF-18943B4DD21A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.Core.Tests", "tests\KeyboardTester.Core.Tests\KeyboardTester.Core.Tests.csproj", "{02B4C955-FC4C-4EAD-A306-AF7F74541159}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardTester.Integration.Tests", "tests\KeyboardTester.Integration.Tests\KeyboardTester.Integration.Tests.csproj", "{A525A146-3D12-436D-8615-BFCCF8DF33B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2F1E6B2-8595-470E-8FDB-4D62B9305D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F1E6B2-8595-470E-8FDB-4D62B9305D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F1E6B2-8595-470E-8FDB-4D62B9305D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F1E6B2-8595-470E-8FDB-4D62B9305D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6870FC1A-186A-4E48-94C6-6EA069C30EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6870FC1A-186A-4E48-94C6-6EA069C30EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6870FC1A-186A-4E48-94C6-6EA069C30EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6870FC1A-186A-4E48-94C6-6EA069C30EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7112AE-C1FC-4B06-A033-BA07F760D2CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7112AE-C1FC-4B06-A033-BA07F760D2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7112AE-C1FC-4B06-A033-BA07F760D2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7112AE-C1FC-4B06-A033-BA07F760D2CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64835F88-5A61-4034-8930-A38BADF2CAD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64835F88-5A61-4034-8930-A38BADF2CAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64835F88-5A61-4034-8930-A38BADF2CAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64835F88-5A61-4034-8930-A38BADF2CAD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02B4C955-FC4C-4EAD-A306-AF7F74541159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B4C955-FC4C-4EAD-A306-AF7F74541159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02B4C955-FC4C-4EAD-A306-AF7F74541159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02B4C955-FC4C-4EAD-A306-AF7F74541159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A525A146-3D12-436D-8615-BFCCF8DF33B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A525A146-3D12-436D-8615-BFCCF8DF33B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A525A146-3D12-436D-8615-BFCCF8DF33B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A525A146-3D12-436D-8615-BFCCF8DF33B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D2F1E6B2-8595-470E-8FDB-4D62B9305D20} = {F6151076-9B78-41F5-8306-6658751CC4F6}
+		{6870FC1A-186A-4E48-94C6-6EA069C30EFF} = {F6151076-9B78-41F5-8306-6658751CC4F6}
+		{FC7112AE-C1FC-4B06-A033-BA07F760D2CA} = {F6151076-9B78-41F5-8306-6658751CC4F6}
+		{64835F88-5A61-4034-8930-A38BADF2CAD2} = {F6151076-9B78-41F5-8306-6658751CC4F6}
+		{02B4C955-FC4C-4EAD-A306-AF7F74541159} = {39B6101D-F28F-4ADE-8ABF-18943B4DD21A}
+		{A525A146-3D12-436D-8615-BFCCF8DF33B5} = {39B6101D-F28F-4ADE-8ABF-18943B4DD21A}
+	EndGlobalSection
+EndGlobal
