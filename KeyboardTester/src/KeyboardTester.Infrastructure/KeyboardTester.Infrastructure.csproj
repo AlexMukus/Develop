@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <Description>Infrastructure Layer: Raw Input, хранение данных, экспорт отчётов.</Description>
+    <UseWPF>true</UseWPF>
+    <Description>Infrastructure Layer: Raw Input, хранение данных, история сессий.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.File" />
-    <PackageReference Include="QuestPDF" />
   </ItemGroup>
 
   <ItemGroup>
