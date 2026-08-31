@@ -5,6 +5,6 @@ namespace KeyboardTester.UI;
 /// <summary>
 /// Точка входа приложения KeyboardTester.
 /// </summary>
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
 }

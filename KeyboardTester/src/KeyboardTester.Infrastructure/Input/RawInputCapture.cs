@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Interop;
 using KeyboardTester.Core.Dto;
 using KeyboardTester.Core.Interfaces;
@@ -135,7 +136,7 @@ public sealed class RawInputCapture : IRawInputCapture
 
         var parameters = new HwndSourceParameters("KeyboardTesterRawInput")
         {
-            WindowStyle = 0x80000000, // WS_POPUP
+            WindowStyle = unchecked((int)0x80000000), // WS_POPUP
             ExtendedWindowStyle = 0x00000080, // WS_EX_TOOLWINDOW
             ParentWindow = IntPtr.Zero,
             Width = 0,
@@ -398,15 +399,15 @@ public sealed class RawInputCapture : IRawInputCapture
         return $"VK{virtualKeyCode:X}";
     }
 
-    private void Post(SendOrPostCallback callback)
+    private void Post(Action callback)
     {
         if (_syncContext != null)
         {
-            _syncContext.Post(_ => callback(null), null);
+            _syncContext.Post(_ => callback(), null);
         }
         else
         {
-            callback(null);
+            callback();
         }
     }
 }

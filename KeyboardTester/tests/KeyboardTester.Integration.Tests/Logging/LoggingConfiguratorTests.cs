@@ -1,5 +1,7 @@
 using FluentAssertions;
 using KeyboardTester.Infrastructure.Logging;
+using Microsoft.Extensions.Logging;
+using Xunit;
 
 namespace KeyboardTester.Integration.Tests.Logging;
 

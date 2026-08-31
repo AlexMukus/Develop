@@ -290,7 +290,7 @@ public sealed class LayoutProvider : ILayoutProvider
     /// Enter упрощённо одной клавишей 2.25u.
     /// </summary>
     private static IReadOnlyList<PhysicalKey> Iso105Keys => Ansi104Keys
-        .Where(k => !new[] { (uint)0x2B, 0x2A, 0x36 }.Contains(k.ScanCode))
+        .Where(k => !new[] { 0x2Bu, 0x2Au, 0x36u }.Contains(k.ScanCode))
         .Select(k => k with { SupportedLayouts = new ReadOnlyCollection<KeyboardLayout>(new[] { KeyboardLayout.Iso105 }) })
         .Concat(new[]
         {

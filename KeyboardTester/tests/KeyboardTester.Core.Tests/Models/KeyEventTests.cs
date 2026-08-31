@@ -1,5 +1,6 @@
 using FluentAssertions;
 using KeyboardTester.Core.Models;
+using Xunit;
 
 namespace KeyboardTester.Core.Tests.Models;
 
