@@ -556,7 +556,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void MaybeStopCapture()
     {
-        if (!_isSessionRunning && !_isGhostingTestActive && _rawInputCapture.IsCapturing)
+        if (!IsSessionRunning && !IsGhostingTestActive && _rawInputCapture.IsCapturing)
         {
             _rawInputCapture.StopCapture();
         }

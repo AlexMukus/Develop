@@ -6,7 +6,7 @@ namespace KeyboardTester.Infrastructure.Input;
 /// Структура RAWINPUTDEVICE для RegisterRawInputDevices.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RAWINPUTDEVICE
+public struct RAWINPUTDEVICE
 {
     public ushort usUsagePage;
     public ushort usUsage;
@@ -18,7 +18,7 @@ internal struct RAWINPUTDEVICE
 /// Заголовок структуры RAWINPUT.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RAWINPUTHEADER
+public struct RAWINPUTHEADER
 {
     public uint dwType;
     public uint dwSize;
@@ -30,7 +30,7 @@ internal struct RAWINPUTHEADER
 /// Данные клавиатуры в RAWINPUT.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RAWKEYBOARD
+public struct RAWKEYBOARD
 {
     public ushort MakeCode;
     public ushort Flags;
@@ -44,7 +44,7 @@ internal struct RAWKEYBOARD
 /// Структура RAWINPUT (только клавиатурная часть).
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RAWINPUT
+public struct RAWINPUT
 {
     public RAWINPUTHEADER header;
     public RAWKEYBOARD keyboard;
@@ -54,7 +54,7 @@ internal struct RAWINPUT
 /// Элемент списка устройств для GetRawInputDeviceList.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RAWINPUTDEVICELIST
+public struct RAWINPUTDEVICELIST
 {
     public IntPtr hDevice;
     public uint dwType;
@@ -64,7 +64,7 @@ internal struct RAWINPUTDEVICELIST
 /// Клавиатурная часть структуры RID_DEVICE_INFO.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RID_DEVICE_INFO_KEYBOARD
+public struct RID_DEVICE_INFO_KEYBOARD
 {
     public uint dwType;
     public uint dwSubType;
@@ -78,7 +78,7 @@ internal struct RID_DEVICE_INFO_KEYBOARD
 /// Мышиная часть структуры RID_DEVICE_INFO.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RID_DEVICE_INFO_MOUSE
+public struct RID_DEVICE_INFO_MOUSE
 {
     public uint dwId;
     public uint dwNumberOfButtons;
@@ -90,7 +90,7 @@ internal struct RID_DEVICE_INFO_MOUSE
 /// HID-часть структуры RID_DEVICE_INFO.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct RID_DEVICE_INFO_HID
+public struct RID_DEVICE_INFO_HID
 {
     public uint dwVendorId;
     public uint dwProductId;
@@ -103,7 +103,7 @@ internal struct RID_DEVICE_INFO_HID
 /// Информация об устройстве Raw Input (union keyboard/mouse/hid).
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
-internal struct RID_DEVICE_INFO
+public struct RID_DEVICE_INFO
 {
     [FieldOffset(0)] public uint cbSize;
     [FieldOffset(4)] public uint dwType;

@@ -19,7 +19,7 @@ public record PhysicalKey(
     /// <see cref="Id"/> игнорируется, чтобы сериализованные экземпляры
     /// оставались сопоставимыми с ключами из провайдера раскладок.
     /// </summary>
-    public virtual bool Equals(PhysicalKey? other) =>
+    public override bool Equals(PhysicalKey? other) =>
         other is not null && ScanCode == other.ScanCode && VirtualKeyCode == other.VirtualKeyCode;
 
     /// <inheritdoc />

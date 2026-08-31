@@ -11,6 +11,9 @@ public interface IStatisticsEngine
     /// <summary>Событие обновления статистики по клавише.</summary>
     event EventHandler<KeyStatisticsUpdatedEventArgs>? StatisticsUpdated;
 
+    /// <summary>Выбранная раскладка клавиатуры.</summary>
+    KeyboardLayout SelectedLayout { get; set; }
+
     /// <summary>Зарегистрировать нажатие клавиши.</summary>
     void RecordKeyDown(KeyEvent keyEvent);
 
