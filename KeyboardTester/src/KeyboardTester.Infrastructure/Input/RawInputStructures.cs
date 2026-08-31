@@ -59,3 +59,55 @@ internal struct RAWINPUTDEVICELIST
     public IntPtr hDevice;
     public uint dwType;
 }
+
+/// <summary>
+/// Клавиатурная часть структуры RID_DEVICE_INFO.
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+internal struct RID_DEVICE_INFO_KEYBOARD
+{
+    public uint dwType;
+    public uint dwSubType;
+    public uint dwKeyboardMode;
+    public uint dwNumberOfFunctionKeys;
+    public uint dwNumberOfIndicators;
+    public uint dwNumberOfKeysTotal;
+}
+
+/// <summary>
+/// Мышиная часть структуры RID_DEVICE_INFO.
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+internal struct RID_DEVICE_INFO_MOUSE
+{
+    public uint dwId;
+    public uint dwNumberOfButtons;
+    public uint dwSampleRate;
+    public int fHasHorizontalWheel;
+}
+
+/// <summary>
+/// HID-часть структуры RID_DEVICE_INFO.
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+internal struct RID_DEVICE_INFO_HID
+{
+    public uint dwVendorId;
+    public uint dwProductId;
+    public uint dwVersionNumber;
+    public ushort usUsagePage;
+    public ushort usUsage;
+}
+
+/// <summary>
+/// Информация об устройстве Raw Input (union keyboard/mouse/hid).
+/// </summary>
+[StructLayout(LayoutKind.Explicit)]
+internal struct RID_DEVICE_INFO
+{
+    [FieldOffset(0)] public uint cbSize;
+    [FieldOffset(4)] public uint dwType;
+    [FieldOffset(8)] public RID_DEVICE_INFO_KEYBOARD keyboard;
+    [FieldOffset(8)] public RID_DEVICE_INFO_MOUSE mouse;
+    [FieldOffset(8)] public RID_DEVICE_INFO_HID hid;
+}

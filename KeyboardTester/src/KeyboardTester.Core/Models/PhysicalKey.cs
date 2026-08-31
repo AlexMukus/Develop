@@ -10,6 +10,18 @@ public sealed record PhysicalKey(
     string DisplayName,
     string EnglishName,
     int Row,
-    int Column,
+    double Column,
     double KeySize,
-    IReadOnlyList<KeyboardLayout> SupportedLayouts);
+    IReadOnlyList<KeyboardLayout> SupportedLayouts)
+{
+    /// <summary>
+    /// Клавиши считаются равными по виртуальному и скан-коду.
+    /// <see cref="Id"/> игнорируется, чтобы сериализованные экземпляры
+    /// оставались сопоставимыми с ключами из провайдера раскладок.
+    /// </summary>
+    public override bool Equals(PhysicalKey? other) =>
+        other is not null && ScanCode == other.ScanCode && VirtualKeyCode == other.VirtualKeyCode;
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(ScanCode, VirtualKeyCode);
+}

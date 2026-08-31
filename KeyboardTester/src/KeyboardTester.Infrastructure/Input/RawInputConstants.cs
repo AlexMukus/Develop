@@ -17,6 +17,9 @@ internal static class RawInputConstants
     /// <summary>Получать уведомления о подключении/отключении устройств.</summary>
     public const uint RIDEV_DEVNOTIFY = 0x00002000;
 
+    /// <summary>Отменить регистрацию устройства.</summary>
+    public const uint RIDEV_REMOVE = 0x00000001;
+
     /// <summary>Команда GetRawInputData: получить данные ввода.</summary>
     public const uint RID_INPUT = 0x10000003;
 
