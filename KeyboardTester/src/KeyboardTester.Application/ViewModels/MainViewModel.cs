@@ -62,6 +62,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _statisticsEngine.SelectedLayout = SelectedLayout;
         _currentTheme = _themeService.CurrentTheme;
 
+        AvailableLayouts = _layoutProvider.SupportedLayouts;
+
+        foreach (InputDevice device in _rawInputCapture.ConnectedKeyboards)
+        {
+            ConnectedKeyboards.Add(device);
+        }
+
         SubscribeEvents();
         RefreshLayout();
         RefreshHistory();
@@ -159,6 +166,45 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private SessionComparisonResult? _lastComparison;
 
+    /// <summary>
+    /// Выбранная активная клавиатура для захвата.
+    /// </summary>
+    [ObservableProperty]
+    private InputDevice? _selectedKeyboard;
+
+    /// <summary>
+    /// Текущее количество одновременно нажатых клавиш в ghosting-тесте.
+    /// </summary>
+    [ObservableProperty]
+    private int _ghostingPressedCount;
+
+    /// <summary>
+    /// Максимальное количество одновременно зарегистрированных клавиш в ghosting-тесте.
+    /// </summary>
+    [ObservableProperty]
+    private int _ghostingMaxCount;
+
+    /// <summary>
+    /// Поддерживает ли клавиатура N-Key Rollover по итогам ghosting-теста.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isNKeyRollover;
+
+    /// <summary>
+    /// Поддерживаемые раскладки клавиатур.
+    /// </summary>
+    public IReadOnlyList<KeyboardLayout> AvailableLayouts { get; }
+
+    /// <summary>
+    /// Подключённые клавиатуры.
+    /// </summary>
+    public ObservableCollection<InputDevice> ConnectedKeyboards { get; } = new();
+
+    /// <summary>
+    /// Текущая статистика по клавишам для панели статистики.
+    /// </summary>
+    public ObservableCollection<KeyStatistics> Statistics { get; } = new();
+
     #endregion
 
     #region Commands
@@ -192,11 +238,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
         PressIntervalPoints.Clear();
         HoldDurationPoints.Clear();
         GhostingResults.Clear();
+        Statistics.Clear();
         _intervalCounts.Clear();
         _durationCounts.Clear();
         SessionDuration = TimeSpan.Zero;
         TotalPressCount = 0;
         ProblematicKeysCount = 0;
+        GhostingPressedCount = 0;
+        GhostingMaxCount = 0;
+        IsNKeyRollover = false;
 
         foreach (KeyViewModel vm in Keys)
         {
@@ -321,10 +371,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _themeService.SetTheme(value);
     }
 
+    partial void OnSelectedKeyboardChanged(InputDevice? value)
+    {
+        if (value != null)
+        {
+            _rawInputCapture.SelectDevice(value.DevicePath);
+        }
+    }
+
     private void SubscribeEvents()
     {
         _rawInputCapture.KeyPressed += OnKeyPressed;
         _rawInputCapture.KeyReleased += OnKeyReleased;
+        _rawInputCapture.DeviceConnected += OnDeviceConnected;
+        _rawInputCapture.DeviceDisconnected += OnDeviceDisconnected;
         _statisticsEngine.StatisticsUpdated += OnStatisticsUpdated;
         _ghostingTestEngine.TestResultUpdated += OnGhostingResultUpdated;
         _sessionHistoryService.SessionsChanged += OnSessionsChanged;
@@ -338,6 +398,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         _rawInputCapture.KeyPressed -= OnKeyPressed;
         _rawInputCapture.KeyReleased -= OnKeyReleased;
+        _rawInputCapture.DeviceConnected -= OnDeviceConnected;
+        _rawInputCapture.DeviceDisconnected -= OnDeviceDisconnected;
         _statisticsEngine.StatisticsUpdated -= OnStatisticsUpdated;
         _ghostingTestEngine.TestResultUpdated -= OnGhostingResultUpdated;
         _sessionHistoryService.SessionsChanged -= OnSessionsChanged;
@@ -399,6 +461,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
 
             UpdateChartPoints(e.Key, e.Statistics);
+            UpsertStatistics(e.Key, e.Statistics);
             RecalculateTotals();
         });
     }
@@ -409,6 +472,39 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             GhostingResults.Add(e);
             TrimCollection(GhostingResults, MaxGhostingResults);
+            GhostingPressedCount = e.PressedKeys.Count;
+            GhostingMaxCount = e.MaxSimultaneousKeys;
+            IsNKeyRollover = e.IsNKeyRollover;
+        });
+    }
+
+    private void OnDeviceConnected(object? sender, InputDevice device)
+    {
+        Post(() =>
+        {
+            if (!ConnectedKeyboards.Any(d => d.DevicePath == device.DevicePath))
+            {
+                ConnectedKeyboards.Add(device);
+            }
+        });
+    }
+
+    private void OnDeviceDisconnected(object? sender, InputDevice device)
+    {
+        Post(() =>
+        {
+            InputDevice? existing = ConnectedKeyboards.FirstOrDefault(d => d.DevicePath == device.DevicePath);
+            if (existing == null)
+            {
+                return;
+            }
+
+            bool wasSelected = SelectedKeyboard == existing;
+            ConnectedKeyboards.Remove(existing);
+            if (wasSelected)
+            {
+                SelectedKeyboard = ConnectedKeyboards.FirstOrDefault();
+            }
         });
     }
 
@@ -469,6 +565,26 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 vm.PressCount = stats.PressCount;
             }
         }
+
+        Statistics.Clear();
+        foreach (KeyStatistics stats in _statisticsEngine.GetAllStatistics().Values)
+        {
+            Statistics.Add(stats);
+        }
+    }
+
+    private void UpsertStatistics(PhysicalKey key, KeyStatistics statistics)
+    {
+        for (int i = 0; i < Statistics.Count; i++)
+        {
+            if (Statistics[i].Key.Equals(key))
+            {
+                Statistics[i] = statistics;
+                return;
+            }
+        }
+
+        Statistics.Add(statistics);
     }
 
     private void RefreshHistory()

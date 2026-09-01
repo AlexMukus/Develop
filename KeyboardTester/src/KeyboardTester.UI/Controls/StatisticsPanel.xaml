@@ -1,0 +1,58 @@
+<UserControl x:Class="KeyboardTester.UI.Controls.StatisticsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:KeyboardTester.UI.Converters">
+    <UserControl.Resources>
+        <converters:KeyStatusToBrushConverter x:Key="StatusToBrush"/>
+        <converters:KeyStatusToDescriptionConverter x:Key="StatusToDescription"/>
+        <CollectionViewSource x:Key="StatisticsView"
+                              Source="{Binding Statistics}"
+                              Filter="StatisticsView_Filter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ComboBox x:Name="FilterCombo"
+                  Grid.Row="0"
+                  SelectedIndex="0"
+                  Margin="0,0,0,6"
+                  SelectionChanged="FilterCombo_SelectionChanged">
+            <ComboBoxItem Content="Все"/>
+            <ComboBoxItem Content="Только проблемные"/>
+            <ComboBoxItem Content="Только не тестированные"/>
+        </ComboBox>
+
+        <DataGrid x:Name="StatisticsGrid"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Source={StaticResource StatisticsView}}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserSortColumns="True"
+                  MouseDoubleClick="StatisticsGrid_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Клавиша" Binding="{Binding Key.DisplayName}" Width="*"/>
+                <DataGridTextColumn Header="Нажатий" Binding="{Binding PressCount}" Width="Auto"/>
+                <DataGridTextColumn Header="Ср. интервал, мс"
+                                    Binding="{Binding AverageIntervalMs, StringFormat=F1}" Width="Auto"/>
+                <DataGridTextColumn Header="Ср. удержание, мс"
+                                    Binding="{Binding AverageHoldDurationMs, StringFormat=F1}" Width="Auto"/>
+                <DataGridTextColumn Header="Дребезг" Binding="{Binding ChatterEvents.Count}" Width="Auto"/>
+                <DataGridTemplateColumn Header="Статус" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border Padding="4,1" CornerRadius="3"
+                                    Background="{Binding Status, Converter={StaticResource StatusToBrush}}">
+                                <TextBlock Foreground="White"
+                                           Text="{Binding Status, Converter={StaticResource StatusToDescription}}"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

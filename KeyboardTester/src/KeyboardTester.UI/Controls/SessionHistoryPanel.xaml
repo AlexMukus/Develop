@@ -1,0 +1,67 @@
+<UserControl x:Class="KeyboardTester.UI.Controls.SessionHistoryPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:KeyboardTester.UI.Converters">
+    <UserControl.Resources>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility"/>
+        <converters:KeyStatusToDescriptionConverter x:Key="StatusToDescription"/>
+    </UserControl.Resources>
+
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ListView Grid.Row="0"
+                  ItemsSource="{Binding SessionHistory}"
+                  SelectedItem="{Binding SelectedSession, Mode=TwoWay}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding DisplayName}" Width="140"/>
+                    <GridViewColumn Header="Дата" DisplayMemberBinding="{Binding FormattedDate}" Width="120"/>
+                    <GridViewColumn Header="Длительность"
+                                    DisplayMemberBinding="{Binding Session.Duration, StringFormat=hh\:mm\:ss}" Width="90"/>
+                    <GridViewColumn Header="Нажатий" DisplayMemberBinding="{Binding TotalPressCount}" Width="70"/>
+                    <GridViewColumn Header="Проблемных" DisplayMemberBinding="{Binding ProblematicKeysCount}" Width="90"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6">
+            <Button Content="Удалить" Padding="10,4" Margin="0,0,6,0" Click="DeleteButton_Click"/>
+            <Button Content="Сравнить две последние" Padding="10,4"
+                    Command="{Binding CompareSessionsCommand}"/>
+        </StackPanel>
+
+        <Border Grid.Row="2"
+                Visibility="{Binding LastComparison, Converter={StaticResource NullToVisibility}}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="8">
+            <StackPanel>
+                <TextBlock Text="Сравнение двух последних сессий" FontWeight="Bold" Margin="0,0,0,4"/>
+                <TextBlock Text="{Binding LastComparison.PressCountDelta, StringFormat='Изменение нажатий: {0:+0;-0;0}'}"/>
+                <TextBlock Text="{Binding LastComparison.ProblematicKeysDelta, StringFormat='Изменение проблемных клавиш: {0:+0;-0;0}'}"
+                           Margin="0,0,0,4"/>
+                <TextBlock Text="Изменения статусов клавиш:" FontWeight="SemiBold"/>
+                <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding LastComparison.KeyStatusChanges}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,1">
+                                    <TextBlock Text="{Binding Key.DisplayName}" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding OldStatus, Converter={StaticResource StatusToDescription}}"/>
+                                    <TextBlock Text=" → "/>
+                                    <TextBlock Text="{Binding NewStatus, Converter={StaticResource StatusToDescription}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
