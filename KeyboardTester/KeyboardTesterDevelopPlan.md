@@ -68,8 +68,10 @@
 - Существующий `Services/TestSessionService.cs` привести в соответствие с новой моделью `KeyEvent` (record) — он уже компилируется, но проверить логику (старт/стоп сессии, `SessionDuration` через таймер).
 - **Примечание:** `CommunityToolkit.Mvvm` нужен в `KeyboardTester.Application` — добавить `PackageReference` (версия уже в CPM).
 
-Этап 4: Presentation Layer (WPF UI)
-4.1 Главное окно
+## Этап 4: Presentation Layer (WPF UI)
+
+### 4.1 Главное окно
+
 Промпт для ИИ:
 Создай MainWindow.xaml и MainWindow.xaml.cs в KeyboardTester.UI/Views/:
 XAML структура:
@@ -180,7 +182,9 @@ xml
         </StatusBar>
     </Grid>
 </Window>
-4.2 VirtualKeyboardControl (с анимацией)
+
+### 4.2 VirtualKeyboardControl (с анимацией)
+
 Промпт для ИИ:
 Создай VirtualKeyboardControl.xaml и code-behind в KeyboardTester.UI/Controls/:
 XAML:
@@ -333,7 +337,9 @@ public partial class VirtualKeyboardControl : UserControl
         _ => Colors.LightGray
     };
 }
-4.3 Темы (Dark/Light/System)
+
+### 4.3 Темы (Dark/Light/System)
+
 Промпт для ИИ:
 Создай систему тем в KeyboardTester.UI/Themes/:
 1. ThemeManager.cs:
@@ -415,7 +421,9 @@ xml
     <SolidColorBrush x:Key="ChartForegroundBrush" Color="#FF333333"/>
     <SolidColorBrush x:Key="ChartGridBrush" Color="#FFDDDDDD"/>
 </ResourceDictionary>
-4.4 Ghosting Test Control
+
+### 4.4 Ghosting Test Control
+
 Промпт для ИИ:
 Создай GhostingTestControl.xaml в KeyboardTester.UI/Controls/:
 XAML:
@@ -455,7 +463,9 @@ Code-behind логика:
 При нажатии клавиши — мгновенно подсвечивать зелёным (без анимации, для максимальной отзывчивости)
 Счётчик обновляется в реальном времени
 После отпускания всех клавиш — показывать итоговый результат
-4.5 Остальные контролы
+
+### 4.5 Остальные контролы
+
 Промпт для ИИ:
 Создай оставшиеся контролы:
 1. StatisticsPanel.xaml:
@@ -482,7 +492,7 @@ ListView сессий: Название, Дата, Длительность, П�
 Кнопка "Проверить обновления" → открывает GitHub releases в браузере
 
 ## Этап 5: Локализация (`src/KeyboardTester.UI/Resources/`)
-Этап 5: Локализация
+
 Промпт для ИИ:
 Создай русскую локализацию в KeyboardTester.UI/Resources/Strings.ru.resx:
 Ключи и значения:
@@ -541,7 +551,9 @@ SixKRODetected	6KRO (ограничение)
 Создай LocalizationService реализующий ILocalizationService через ResourceManager.
 
 ## Этап 6: Тесты
-6.1 Unit-тесты
+
+### 6.1 Unit-тесты
+
 Промпт для ИИ:
 Создай тесты в KeyboardTester.Core.Tests/:
 1. DebounceAnalyzerTests:
@@ -600,7 +612,9 @@ public class LayoutProviderTests
     [Fact] public void GetKeys_AllKeysHaveUniquePositions() { ... }
     [Fact] public void GetKeys_AllKeysHaveValidScanCodes() { ... }
 }
-6.2 Интеграционные тесты
+
+### 6.2 Интеграционные тесты
+
 Промпт для ИИ:
 Создай тесты в KeyboardTester.Integration.Tests/:
 csharp
