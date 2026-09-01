@@ -270,8 +270,9 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0xA4, 0x38, "Alt", "LeftAlt", 5, 2.5, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0x20, 0x39, "Space", "Space", 5, 3.75, 6.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0xA5, 0xE038, "Alt", "RightAlt", 5, 10, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x5D, 0xE05D, "Menu", "Apps", 5, 11.25, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0xA3, 0xE01D, "Ctrl", "RightCtrl", 5, 12.5, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x5C, 0xE05C, "Win", "RightWin", 5, 11.25, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x5D, 0xE05D, "Menu", "Apps", 5, 12.5, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0xA3, 0xE01D, "Ctrl", "RightCtrl", 5, 13.75, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
 
         K(0x25, 0xE04B, "←", "Left", 5, 14, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
         K(0x28, 0xE050, "↓", "Down", 5, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),

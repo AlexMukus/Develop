@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Description>Модульные тесты для KeyboardTester.Core.</Description>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\KeyboardTester.Core\KeyboardTester.Core.csproj" />
+    <ProjectReference Include="..\..\src\KeyboardTester.Infrastructure\KeyboardTester.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

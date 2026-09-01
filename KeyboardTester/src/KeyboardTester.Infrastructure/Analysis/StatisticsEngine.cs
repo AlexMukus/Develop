@@ -14,6 +14,7 @@ public sealed class StatisticsEngine : IStatisticsEngine
 {
     private readonly ConcurrentDictionary<PhysicalKey, KeyStatistics> _statistics = new();
     private readonly ConcurrentDictionary<PhysicalKey, KeyEvent> _pendingKeyDowns = new();
+    private readonly ConcurrentDictionary<PhysicalKey, long> _lastKeyDownTimestamps = new();
     private readonly IDebounceAnalyzer _debounceAnalyzer;
     private readonly DebounceSettings _settings;
     private readonly ILayoutProvider _layoutProvider;
@@ -63,9 +64,11 @@ public sealed class StatisticsEngine : IStatisticsEngine
             stats.PressCount++;
             stats.LastUpdated = DateTime.Now;
 
-            if (stats.PressCount > 1 && _pendingKeyDowns.TryGetValue(physicalKey, out KeyEvent? lastDown))
+            // Интервал считаем от предыдущего нажатия независимо от того, было ли
+            // между ними отпускание: классический дребезг — это down→up→down.
+            if (stats.PressCount > 1 && _lastKeyDownTimestamps.TryGetValue(physicalKey, out long lastDownMicroseconds))
             {
-                double intervalMs = (keyEvent.TimestampMicroseconds - lastDown.TimestampMicroseconds) / 1000.0;
+                double intervalMs = (keyEvent.TimestampMicroseconds - lastDownMicroseconds) / 1000.0;
                 stats.PressIntervalsMs.Add(intervalMs);
 
                 ChatterSeverity severity = _debounceAnalyzer.DetectChatter(intervalMs, _settings);
@@ -78,6 +81,7 @@ public sealed class StatisticsEngine : IStatisticsEngine
                 }
             }
 
+            _lastKeyDownTimestamps[physicalKey] = keyEvent.TimestampMicroseconds;
             _pendingKeyDowns[physicalKey] = keyEvent;
 
             TrimBuffer(stats.PressIntervalsMs);
@@ -146,6 +150,7 @@ public sealed class StatisticsEngine : IStatisticsEngine
     {
         _statistics.Clear();
         _pendingKeyDowns.Clear();
+        _lastKeyDownTimestamps.Clear();
     }
 
     /// <inheritdoc />
@@ -154,6 +159,7 @@ public sealed class StatisticsEngine : IStatisticsEngine
         ArgumentNullException.ThrowIfNull(key);
         _statistics.TryRemove(key, out _);
         _pendingKeyDowns.TryRemove(key, out _);
+        _lastKeyDownTimestamps.TryRemove(key, out _);
     }
 
     private PhysicalKey? ResolveKey(uint scanCode)
