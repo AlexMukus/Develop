@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:KeyboardTester.UI.Controls"
         xmlns:converters="clr-namespace:KeyboardTester.UI.Converters"
-        Title="Keyboard Tester Pro"
+        xmlns:res="clr-namespace:KeyboardTester.UI.Resources"
+        Title="{x:Static res:Strings.AppTitle}"
         Width="1400" Height="900"
         MinWidth="1200" MinHeight="800"
         WindowStartupLocation="CenterScreen"
@@ -22,37 +23,37 @@
 
         <!-- Toolbar -->
         <ToolBar Grid.Row="0" Background="{DynamicResource ToolbarBackgroundBrush}">
-            <TextBlock Text="Раскладка:" VerticalAlignment="Center" Margin="4,0,2,0"
+            <TextBlock Text="{x:Static res:Strings.Layout}" VerticalAlignment="Center" Margin="4,0,2,0"
                        Foreground="{DynamicResource TextBrush}"/>
             <ComboBox ItemsSource="{Binding AvailableLayouts}"
                       SelectedItem="{Binding SelectedLayout}"
                       Width="110" Margin="0,0,4,0"/>
             <Separator/>
-            <TextBlock Text="Клавиатура:" VerticalAlignment="Center" Margin="4,0,2,0"
+            <TextBlock Text="{x:Static res:Strings.Keyboard}" VerticalAlignment="Center" Margin="4,0,2,0"
                        Foreground="{DynamicResource TextBrush}"/>
             <ComboBox ItemsSource="{Binding ConnectedKeyboards}"
                       SelectedItem="{Binding SelectedKeyboard}"
                       Width="220" Margin="0,0,4,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding ProductName, TargetNullValue='Клавиатура'}"/>
+                        <TextBlock Text="{Binding ProductName, TargetNullValue={x:Static res:Strings.KeyboardFallback}}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Separator/>
-            <Button Content="▶ Начать тест" Command="{Binding StartTestCommand}" Margin="2,0"
+            <Button Content="{x:Static res:Strings.StartTest}" Command="{Binding StartTestCommand}" Margin="2,0"
                     IsEnabled="{Binding IsSessionRunning, Converter={StaticResource InverseBoolConverter}}"/>
-            <Button Content="⏹ Остановить" Command="{Binding StopTestCommand}" Margin="2,0"
+            <Button Content="{x:Static res:Strings.StopTest}" Command="{Binding StopTestCommand}" Margin="2,0"
                     IsEnabled="{Binding IsSessionRunning}"/>
-            <Button Content="🔄 Сбросить" Command="{Binding ResetCommand}" Margin="2,0"/>
+            <Button Content="{x:Static res:Strings.ResetTest}" Command="{Binding ResetCommand}" Margin="2,0"/>
             <Separator/>
-            <Button Content="👻 Ghosting Test" Command="{Binding StartGhostingTestCommand}" Margin="2,0"
+            <Button Content="{x:Static res:Strings.GhostingTest}" Command="{Binding StartGhostingTestCommand}" Margin="2,0"
                     IsEnabled="{Binding IsGhostingTestActive, Converter={StaticResource InverseBoolConverter}}"/>
-            <Button Content="⏹ Стоп Ghosting" Command="{Binding StopGhostingTestCommand}" Margin="2,0"
+            <Button Content="{x:Static res:Strings.GhostingTestStop}" Command="{Binding StopGhostingTestCommand}" Margin="2,0"
                     IsEnabled="{Binding IsGhostingTestActive}"/>
             <Separator/>
-            <Button Content="⚙ Настройки" Command="{Binding OpenSettingsCommand}" Margin="2,0"/>
-            <Button Content="❓ О программе" Command="{Binding OpenAboutCommand}" Margin="2,0"/>
+            <Button Content="{x:Static res:Strings.Settings}" Command="{Binding OpenSettingsCommand}" Margin="2,0"/>
+            <Button Content="{x:Static res:Strings.About}" Command="{Binding OpenAboutCommand}" Margin="2,0"/>
         </ToolBar>
 
         <!-- Content -->
@@ -72,10 +73,10 @@
                 <controls:VirtualKeyboardControl Grid.Row="0" Margin="10,10,10,0"/>
 
                 <TabControl Grid.Row="1" Margin="10">
-                    <TabItem Header="📊 Графики">
+                    <TabItem Header="{x:Static res:Strings.TabCharts}">
                         <controls:ChartsPanelControl/>
                     </TabItem>
-                    <TabItem Header="👻 Ghosting Test"
+                    <TabItem Header="{x:Static res:Strings.TabGhosting}"
                              IsSelected="{Binding IsGhostingTestActive, Mode=OneWay}">
                         <controls:GhostingTestControl/>
                     </TabItem>
@@ -84,10 +85,10 @@
 
             <!-- Right: Statistics + History -->
             <TabControl Grid.Column="1" Margin="0,10,10,10">
-                <TabItem Header="📋 Статистика">
+                <TabItem Header="{x:Static res:Strings.TabStatistics}">
                     <controls:StatisticsPanel/>
                 </TabItem>
-                <TabItem Header="📁 История">
+                <TabItem Header="{x:Static res:Strings.TabHistory}">
                     <controls:SessionHistoryPanel/>
                 </TabItem>
             </TabControl>
@@ -95,13 +96,13 @@
 
         <!-- Status Bar -->
         <StatusBar Grid.Row="2" Background="{DynamicResource StatusBarBackgroundBrush}">
-            <TextBlock Text="{Binding SessionDuration, StringFormat='Длительность: {0:hh\\:mm\\:ss}'}"
+            <TextBlock Text="{Binding SessionDuration, StringFormat={x:Static res:Strings.Duration}}"
                        Foreground="{DynamicResource TextBrush}"/>
             <Separator/>
-            <TextBlock Text="{Binding TotalPressCount, StringFormat='Всего нажатий: {0}'}"
+            <TextBlock Text="{Binding TotalPressCount, StringFormat={x:Static res:Strings.TotalPresses}}"
                        Foreground="{DynamicResource TextBrush}"/>
             <Separator/>
-            <TextBlock Text="{Binding ProblematicKeysCount, StringFormat='Проблемных клавиш: {0}'}"
+            <TextBlock Text="{Binding ProblematicKeysCount, StringFormat={x:Static res:Strings.ProblematicKeys}}"
                        Foreground="{DynamicResource TextBrush}"/>
             <Separator/>
             <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextBrush}"/>

@@ -3,6 +3,7 @@ using KeyboardTester.Core.Enums;
 using KeyboardTester.Core.Interfaces;
 using KeyboardTester.Core.Models;
 using KeyboardTester.UI.Services;
+using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Views;
 
@@ -44,8 +45,8 @@ public partial class SettingsDialog : Window
         {
             MessageBox.Show(
                 this,
-                "Все значения должны быть положительными целыми числами.",
-                "Некорректные настройки",
+                Res.Strings.InvalidSettingsPositive,
+                Res.Strings.InvalidSettingsTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -55,8 +56,8 @@ public partial class SettingsDialog : Window
         {
             MessageBox.Show(
                 this,
-                "Пороги дребезга должны возрастать: критический < предупреждение < лёгкий.",
-                "Некорректные настройки",
+                Res.Strings.InvalidSettingsThresholdOrder,
+                Res.Strings.InvalidSettingsTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;

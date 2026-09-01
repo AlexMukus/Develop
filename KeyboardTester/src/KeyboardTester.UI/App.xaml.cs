@@ -13,6 +13,7 @@ using KeyboardTester.Infrastructure.Storage;
 using KeyboardTester.UI.Services;
 using KeyboardTester.UI.Themes;
 using KeyboardTester.UI.Views;
+using Res = KeyboardTester.UI.Resources;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -71,7 +72,7 @@ public partial class App : System.Windows.Application
         // Presentation-сервисы.
         services.AddSingleton<ThemeManager>();
         services.AddSingleton<IThemeService>(sp => sp.GetRequiredService<ThemeManager>());
-        services.AddSingleton<ILocalizationService, LocalizationServiceStub>();
+        services.AddSingleton<ILocalizationService, LocalizationService>();
 
         // Application Layer (TestSessionService, MainViewModel).
         services.AddKeyboardTesterApplication();
@@ -108,8 +109,8 @@ public partial class App : System.Windows.Application
             ?.LogError(e.Exception, "Необработанное исключение в UI-потоке");
 
         MessageBox.Show(
-            $"Произошла непредвиденная ошибка:\n{e.Exception.Message}",
-            "Ошибка",
+            $"{Res.Strings.UnexpectedError}\n{e.Exception.Message}",
+            Res.Strings.Error,
             MessageBoxButton.OK,
             MessageBoxImage.Error);
 

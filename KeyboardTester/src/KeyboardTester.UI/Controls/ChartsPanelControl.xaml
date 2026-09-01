@@ -1,7 +1,8 @@
 <UserControl x:Class="KeyboardTester.UI.Controls.ChartsPanelControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF">
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:res="clr-namespace:KeyboardTester.UI.Resources">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -13,7 +14,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Интервалы между нажатиями, мс" FontWeight="SemiBold" Margin="0,0,0,4"/>
+            <TextBlock Text="{x:Static res:Strings.IntervalChartTitle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
             <lvc:CartesianChart x:Name="IntervalChart" Grid.Row="1"/>
         </Grid>
 
@@ -22,13 +23,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Время удержания, мс" FontWeight="SemiBold" Margin="0,0,0,4"/>
+            <TextBlock Text="{x:Static res:Strings.HoldChartTitle}" FontWeight="SemiBold" Margin="0,0,0,4"/>
             <lvc:CartesianChart x:Name="HoldChart" Grid.Row="1"/>
         </Grid>
 
         <TextBlock x:Name="EmptyHint"
                    Grid.ColumnSpan="2"
-                   Text="Нет данных. Запустите тест и нажимайте клавиши."
+                   Text="{x:Static res:Strings.NoData}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    TextWrapping="Wrap"

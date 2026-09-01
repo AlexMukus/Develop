@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using KeyboardTester.Application.ViewModels;
 using LiveChartsCore;
+using Res = KeyboardTester.UI.Resources;
 using LiveChartsCore.DefaultEntities;
 using LiveChartsCore.SkiaSharpView;
 
@@ -39,7 +40,7 @@ public partial class ChartsPanelControl : UserControl
                 Values = _intervalValues,
                 GeometrySize = 4,
                 Fill = null,
-                Name = "Интервал, мс",
+                Name = Res.Strings.IntervalSeriesName,
             },
         };
         HoldChart.Series = new ISeries[]
@@ -49,7 +50,7 @@ public partial class ChartsPanelControl : UserControl
                 Values = _holdValues,
                 GeometrySize = 4,
                 Fill = null,
-                Name = "Удержание, мс",
+                Name = Res.Strings.HoldSeriesName,
             },
         };
 

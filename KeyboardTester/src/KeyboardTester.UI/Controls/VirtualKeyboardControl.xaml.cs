@@ -10,6 +10,7 @@ using System.Windows.Media.Animation;
 using KeyboardTester.Application.ViewModels;
 using KeyboardTester.Core.Enums;
 using KeyboardTester.UI.Converters;
+using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Controls;
 
@@ -210,14 +211,14 @@ public partial class VirtualKeyboardControl : UserControl
         var text = new TextBlock();
         text.Inlines.Add(new Run(key.PhysicalKey.DisplayName) { FontWeight = FontWeights.Bold });
         text.Inlines.Add(new LineBreak());
-        text.Inlines.Add(new Run("Нажатий: "));
+        text.Inlines.Add(new Run(Res.Strings.TooltipPressCount));
 
         var pressCountRun = new Run();
         pressCountRun.SetBinding(Run.TextProperty, new Binding(nameof(KeyViewModel.PressCount)) { Source = key });
         text.Inlines.Add(pressCountRun);
 
         text.Inlines.Add(new LineBreak());
-        text.Inlines.Add(new Run("Статус: "));
+        text.Inlines.Add(new Run(Res.Strings.TooltipStatus));
 
         var statusRun = new Run();
         statusRun.SetBinding(Run.TextProperty, new Binding(nameof(KeyViewModel.Status))

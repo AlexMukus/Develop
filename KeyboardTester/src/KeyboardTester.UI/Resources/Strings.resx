@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+    Нейтральный файл ресурсов приложения KeyboardTester.
+    Язык по умолчанию — русский. Значения используются как fallback
+    для любой культуры операционной системы.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ===== Общие / приложение ===== -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Keyboard Tester Pro</value>
+    <comment>Название приложения, заголовок главного окна и шапка «О программе».</comment>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Ошибка</value>
+    <comment>Заголовок диалога ошибки.</comment>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Произошла непредвиденная ошибка:</value>
+    <comment>Текст необработанного исключения (перед сообщением исключения).</comment>
+  </data>
+  <data name="OpenLinkFailed" xml:space="preserve">
+    <value>Не удалось открыть ссылку:</value>
+    <comment>Не удалось открыть URL в браузере (перед адресом).</comment>
+  </data>
+
+  <!-- ===== Главное окно / панель инструментов ===== -->
+  <data name="StartTest" xml:space="preserve">
+    <value>▶ Начать тест</value>
+  </data>
+  <data name="StopTest" xml:space="preserve">
+    <value>⏹ Остановить</value>
+  </data>
+  <data name="ResetTest" xml:space="preserve">
+    <value>🔄 Сбросить</value>
+  </data>
+  <data name="GhostingTest" xml:space="preserve">
+    <value>👻 Ghosting Test</value>
+  </data>
+  <data name="GhostingTestStop" xml:space="preserve">
+    <value>⏹ Стоп Ghosting</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>⚙ Настройки</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>❓ О программе</value>
+  </data>
+  <data name="Layout" xml:space="preserve">
+    <value>Раскладка:</value>
+  </data>
+  <data name="Keyboard" xml:space="preserve">
+    <value>Клавиатура:</value>
+  </data>
+  <data name="KeyboardFallback" xml:space="preserve">
+    <value>Клавиатура</value>
+    <comment>Подпись устройства ввода, когда имя неизвестно (TargetNullValue).</comment>
+  </data>
+
+  <!-- ===== Строка состояния ===== -->
+  <data name="Duration" xml:space="preserve">
+    <value>Длительность: {0:hh\:mm\:ss}</value>
+    <comment>Формат строки длительности сессии в статус-баре.</comment>
+  </data>
+  <data name="TotalPresses" xml:space="preserve">
+    <value>Всего нажатий: {0}</value>
+  </data>
+  <data name="ProblematicKeys" xml:space="preserve">
+    <value>Проблемных клавиш: {0}</value>
+  </data>
+
+  <!-- ===== Вкладки ===== -->
+  <data name="TabCharts" xml:space="preserve">
+    <value>📊 Графики</value>
+  </data>
+  <data name="TabGhosting" xml:space="preserve">
+    <value>👻 Ghosting Test</value>
+  </data>
+  <data name="TabStatistics" xml:space="preserve">
+    <value>📋 Статистика</value>
+  </data>
+  <data name="TabHistory" xml:space="preserve">
+    <value>📁 История</value>
+  </data>
+
+  <!-- ===== Таблица статистики ===== -->
+  <data name="ColumnKey" xml:space="preserve">
+    <value>Клавиша</value>
+  </data>
+  <data name="ColumnPressCount" xml:space="preserve">
+    <value>Нажатий</value>
+  </data>
+  <data name="ColumnAvgInterval" xml:space="preserve">
+    <value>Ср. интервал, мс</value>
+  </data>
+  <data name="ColumnAvgHold" xml:space="preserve">
+    <value>Ср. удержание, мс</value>
+  </data>
+  <data name="ColumnChatter" xml:space="preserve">
+    <value>Дребезг</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="FilterProblematic" xml:space="preserve">
+    <value>Только проблемные</value>
+  </data>
+  <data name="FilterNotTested" xml:space="preserve">
+    <value>Только не тестированные</value>
+  </data>
+
+  <!-- ===== Статусы клавиш ===== -->
+  <data name="StatusNotTested" xml:space="preserve">
+    <value>Не тестирована</value>
+  </data>
+  <data name="StatusOk" xml:space="preserve">
+    <value>Исправна</value>
+  </data>
+  <data name="StatusWarning" xml:space="preserve">
+    <value>Требует внимания</value>
+  </data>
+  <data name="StatusCritical" xml:space="preserve">
+    <value>Критическая проблема</value>
+  </data>
+
+  <!-- ===== Виртуальная клавиатура / всплывающая подсказка ===== -->
+  <data name="TooltipPressCount" xml:space="preserve">
+    <value>Нажатий: </value>
+    <comment>Метка количества нажатий во всплывающей подсказке клавиши.</comment>
+  </data>
+  <data name="TooltipStatus" xml:space="preserve">
+    <value>Статус: </value>
+    <comment>Метка статуса клавиши во всплывающей подсказке.</comment>
+  </data>
+
+  <!-- ===== Графики ===== -->
+  <data name="IntervalChartTitle" xml:space="preserve">
+    <value>Интервалы между нажатиями, мс</value>
+  </data>
+  <data name="HoldChartTitle" xml:space="preserve">
+    <value>Время удержания, мс</value>
+  </data>
+  <data name="IntervalSeriesName" xml:space="preserve">
+    <value>Интервал, мс</value>
+  </data>
+  <data name="HoldSeriesName" xml:space="preserve">
+    <value>Удержание, мс</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>Нет данных. Запустите тест и нажимайте клавиши.</value>
+  </data>
+  <data name="SelectKeyHint" xml:space="preserve">
+    <value>Выберите клавишу для просмотра графиков</value>
+    <comment>Подсказка в панели графиков, когда клавиша не выбрана.</comment>
+  </data>
+
+  <!-- ===== Ghosting-тест ===== -->
+  <data name="GhostingInstruction" xml:space="preserve">
+    <value>Зажмите как можно больше клавиш одновременно. Система покажет, сколько из них зарегистрировано.</value>
+  </data>
+  <data name="GhostingPressed" xml:space="preserve">
+    <value>Нажато: </value>
+  </data>
+  <data name="GhostingMax" xml:space="preserve">
+    <value>Максимум: </value>
+  </data>
+  <data name="NKRO" xml:space="preserve">
+    <value>NKRO: </value>
+  </data>
+  <data name="NKRODetected" xml:space="preserve">
+    <value>NKRO обнаружен</value>
+  </data>
+  <data name="SixKRODetected" xml:space="preserve">
+    <value>6KRO (ограничение)</value>
+  </data>
+
+  <!-- ===== История сессий ===== -->
+  <data name="ColumnName" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="ColumnDate" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="ColumnDuration" xml:space="preserve">
+    <value>Длительность</value>
+  </data>
+  <data name="ColumnPresses" xml:space="preserve">
+    <value>Нажатий</value>
+  </data>
+  <data name="ColumnProblematic" xml:space="preserve">
+    <value>Проблемных</value>
+  </data>
+  <data name="SaveCurrentSession" xml:space="preserve">
+    <value>Сохранить текущую</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="CompareLastTwo" xml:space="preserve">
+    <value>Сравнить две последние</value>
+  </data>
+  <data name="CompareSessions" xml:space="preserve">
+    <value>Сравнить сессии</value>
+  </data>
+  <data name="ComparisonTitle" xml:space="preserve">
+    <value>Сравнение двух последних сессий</value>
+  </data>
+  <data name="ComparisonPressDelta" xml:space="preserve">
+    <value>Изменение нажатий: {0:+0;-0;0}</value>
+  </data>
+  <data name="ComparisonProblematicDelta" xml:space="preserve">
+    <value>Изменение проблемных клавиш: {0:+0;-0;0}</value>
+  </data>
+  <data name="ComparisonStatusChanges" xml:space="preserve">
+    <value>Изменения статусов клавиш:</value>
+  </data>
+  <data name="ConfirmDeleteTitle" xml:space="preserve">
+    <value>Подтверждение удаления</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Удалить сессию «{0}»?</value>
+    <comment>{0} — имя сессии.</comment>
+  </data>
+  <data name="SessionSaved" xml:space="preserve">
+    <value>Сессия сохранена в историю</value>
+  </data>
+
+  <!-- ===== Диалог настроек ===== -->
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="ThresholdCritical" xml:space="preserve">
+    <value>Порог критического дребезга, мс</value>
+  </data>
+  <data name="ThresholdWarning" xml:space="preserve">
+    <value>Порог предупреждения, мс</value>
+  </data>
+  <data name="ThresholdMild" xml:space="preserve">
+    <value>Порог лёгкого дребезга, мс</value>
+  </data>
+  <data name="ThresholdStuck" xml:space="preserve">
+    <value>Порог залипания, мс</value>
+  </data>
+  <data name="MaxEvents" xml:space="preserve">
+    <value>Макс. событий в буфере</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Системная</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Тёмная</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="SettingsRestartHint" xml:space="preserve">
+    <value>Новые пороги вступят в силу после перезапуска приложения.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="InvalidSettingsTitle" xml:space="preserve">
+    <value>Некорректные настройки</value>
+  </data>
+  <data name="InvalidSettingsPositive" xml:space="preserve">
+    <value>Все значения должны быть положительными целыми числами.</value>
+  </data>
+  <data name="InvalidSettingsThresholdOrder" xml:space="preserve">
+    <value>Пороги дребезга должны возрастать: критический &lt; предупреждение &lt; лёгкий.</value>
+  </data>
+
+  <!-- ===== Диалог «О программе» ===== -->
+  <data name="AboutTitle" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>Утилита для тестирования клавиатур: регистрация нажатий, диагностика дребезга и залипания клавиш, тест на ghosting (NKRO/6KRO), история сессий.</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Версия: {0}</value>
+    <comment>{0} — номер версии.</comment>
+  </data>
+  <data name="VersionUnknown" xml:space="preserve">
+    <value>неизвестна</value>
+    <comment>Подставляется, когда версию сборки определить не удалось.</comment>
+  </data>
+  <data name="Repository" xml:space="preserve">
+    <value>Репозиторий:</value>
+  </data>
+  <data name="GitHubLink" xml:space="preserve">
+    <value>github.com/yourusername/KeyboardTester</value>
+  </data>
+  <data name="License" xml:space="preserve">
+    <value>Лицензия MIT</value>
+  </data>
+  <data name="UsedLibraries" xml:space="preserve">
+    <value>Используемые библиотеки:</value>
+  </data>
+  <data name="UsedLibrariesList" xml:space="preserve">
+    <value>CommunityToolkit.Mvvm (MIT), LiveCharts2 (MIT), Serilog (Apache-2.0), SkiaSharp (MIT).</value>
+  </data>
+  <data name="CheckUpdates" xml:space="preserve">
+    <value>Проверить обновления</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+</root>

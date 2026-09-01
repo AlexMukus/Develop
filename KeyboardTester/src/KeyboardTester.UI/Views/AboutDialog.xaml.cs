@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Windows;
+using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Views;
 
@@ -18,7 +20,7 @@ public partial class AboutDialog : Window
     public AboutDialog()
     {
         InitializeComponent();
-        VersionText.Text = $"Версия: {GetVersion()}";
+        VersionText.Text = string.Format(CultureInfo.CurrentCulture, Res.Strings.Version, GetVersion());
     }
 
     private void GitHubLink_Click(object sender, RoutedEventArgs e)
@@ -36,7 +38,7 @@ public partial class AboutDialog : Window
         return Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
             ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-            ?? "неизвестна";
+            ?? Res.Strings.VersionUnknown;
     }
 
     private static void OpenUrl(string url)
@@ -48,8 +50,8 @@ public partial class AboutDialog : Window
         catch (Exception)
         {
             MessageBox.Show(
-                $"Не удалось открыть ссылку:\n{url}",
-                "Ошибка",
+                $"{Res.Strings.OpenLinkFailed}\n{url}",
+                Res.Strings.Error,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }

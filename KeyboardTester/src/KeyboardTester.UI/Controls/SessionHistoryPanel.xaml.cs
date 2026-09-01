@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using KeyboardTester.Application.ViewModels;
+using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Controls;
 
@@ -26,8 +28,8 @@ public partial class SessionHistoryPanel : UserControl
 
         MessageBoxResult result = MessageBox.Show(
             Window.GetWindow(this),
-            $"Удалить сессию «{vm.SelectedSession.DisplayName}»?",
-            "Подтверждение удаления",
+            string.Format(CultureInfo.CurrentCulture, Res.Strings.ConfirmDelete, vm.SelectedSession.DisplayName),
+            Res.Strings.ConfirmDeleteTitle,
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 

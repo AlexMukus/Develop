@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using KeyboardTester.Core.Enums;
+using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Converters;
 
@@ -22,14 +23,14 @@ public sealed class KeyStatusToDescriptionConverter : IValueConverter
     }
 
     /// <summary>
-    /// Возвращает текстовое описание статуса клавиши.
+    /// Возвращает локализованное текстовое описание статуса клавиши.
     /// </summary>
     public static string Describe(KeyStatus status) => status switch
     {
-        KeyStatus.NotTested => "Не тестирована",
-        KeyStatus.Ok => "Исправна",
-        KeyStatus.Warning => "Требует внимания",
-        KeyStatus.Critical => "Критическая проблема",
+        KeyStatus.NotTested => Res.Strings.StatusNotTested,
+        KeyStatus.Ok => Res.Strings.StatusOk,
+        KeyStatus.Warning => Res.Strings.StatusWarning,
+        KeyStatus.Critical => Res.Strings.StatusCritical,
         _ => status.ToString(),
     };
 }
