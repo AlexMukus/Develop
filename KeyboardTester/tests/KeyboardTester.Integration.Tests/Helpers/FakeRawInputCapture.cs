@@ -52,6 +52,14 @@ internal sealed class FakeRawInputCapture : IRawInputCapture
     public void Release(uint scanCode, long timestampMicroseconds) =>
         KeyReleased?.Invoke(this, CreateArgs(scanCode, timestampMicroseconds));
 
+    /// <summary>Симулирует подключение устройства.</summary>
+    public void RaiseDeviceConnected(InputDevice device) =>
+        DeviceConnected?.Invoke(this, device);
+
+    /// <summary>Симулирует отключение устройства.</summary>
+    public void RaiseDeviceDisconnected(InputDevice device) =>
+        DeviceDisconnected?.Invoke(this, device);
+
     private static RawKeyEventArgs CreateArgs(uint scanCode, long timestampMicroseconds) => new()
     {
         VirtualKeyCode = 0,

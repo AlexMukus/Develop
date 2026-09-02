@@ -1,3 +1,4 @@
+using System.IO;
 using FluentAssertions;
 using KeyboardTester.Application.Services;
 using KeyboardTester.Core.Enums;

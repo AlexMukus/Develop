@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using KeyboardTester.Application.ViewModels;
 using LiveChartsCore;
 using Res = KeyboardTester.UI.Resources;
-using LiveChartsCore.DefaultEntities;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 
 namespace KeyboardTester.UI.Controls;

@@ -1,5 +1,6 @@
 using FluentAssertions;
 using KeyboardTester.Core.Dto;
+using KeyboardTester.Core.Interfaces;
 using KeyboardTester.Core.Enums;
 using KeyboardTester.Core.Models;
 using KeyboardTester.Infrastructure.Analysis;

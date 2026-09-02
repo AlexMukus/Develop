@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using KeyboardTester.Core.Enums;
 
 namespace KeyboardTester.Core.Models;
@@ -24,17 +25,24 @@ public sealed class KeyStatistics
 
     /// <summary>
     /// Интервалы между нажатиями в миллисекундах.
+    /// Populate обязателен: без сеттера System.Text.Json пропускает свойство
+    /// при десериализации, и история сессий теряет интервалы.
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public List<double> PressIntervalsMs { get; } = [];
 
     /// <summary>
     /// Время удержания каждого нажатия в миллисекундах.
+    /// <see cref="JsonObjectCreationHandlingAttribute"/> — см. <see cref="PressIntervalsMs"/>.
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public List<double> HoldDurationsMs { get; } = [];
 
     /// <summary>
     /// Зарегистрированные события дребезга.
+    /// <see cref="JsonObjectCreationHandlingAttribute"/> — см. <see cref="PressIntervalsMs"/>.
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public List<ChatterEvent> ChatterEvents { get; } = [];
 
     /// <summary>

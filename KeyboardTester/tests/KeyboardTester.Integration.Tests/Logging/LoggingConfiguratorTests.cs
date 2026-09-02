@@ -1,3 +1,4 @@
+using System.IO;
 using FluentAssertions;
 using KeyboardTester.Infrastructure.Logging;
 using Microsoft.Extensions.Logging;
