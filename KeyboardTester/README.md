@@ -62,10 +62,31 @@ dotnet test KeyboardTester.sln
 
 # Запуск приложения
 dotnet run --project src/KeyboardTester.UI/KeyboardTester.UI.csproj
-
-# Публикация релизной сборки
-dotnet publish src/KeyboardTester.UI/KeyboardTester.UI.csproj -c Release -r win-x64
 ```
+
+### Portable-сборка (один EXE, без установки .NET)
+
+```powershell
+# Release + тесты + ZIP-архив в artifacts/KeyboardTester-<версия>-win-x64.zip
+.\build-portable.ps1
+
+# Без прогона тестов (например, когда SDK установлен только для сборки)
+.\build-portable.ps1 -SkipTests
+
+# Явно задать версию в имени артефакта
+.\build-portable.ps1 -Version v1.0.0
+```
+
+Скрипт выполняет `dotnet publish` self-contained single-file (win-x64), удаляет `.pdb`,
+укладывает результат в `artifacts/KeyboardTester-<версия>-win-x64/` и создаёт ZIP
+для распространения. Версия берётся из `git describe --tags --always`,
+при отсутствии git/тегов — `dev`.
+
+### Запуск из VS Code
+
+Открыть папку проекта и нажать **F5** (конфигурация «Launch WPF»):
+сборка UI-проекта через задачу `build` и запуск `KeyboardTester.UI.exe`.
+Задача `publish-portable` (Terminal → Run Task…) вызывает `build-portable.ps1`.
 
 ## Лицензия
 
