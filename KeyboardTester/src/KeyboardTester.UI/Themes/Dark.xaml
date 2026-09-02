@@ -10,4 +10,28 @@
     <SolidColorBrush x:Key="ChartBackgroundBrush" Color="#FF252526"/>
     <SolidColorBrush x:Key="ChartForegroundBrush" Color="#FFCCCCCC"/>
     <SolidColorBrush x:Key="ChartGridBrush" Color="#FF3E3E3E"/>
+
+    <!-- Панели и таблицы (v1.1.0) -->
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#FF252526"/>
+    <SolidColorBrush x:Key="PanelBorderBrush" Color="#FF3E3E3E"/>
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF333333"/>
+    <SolidColorBrush x:Key="ControlForegroundBrush" Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="ItemBackgroundBrush" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="ItemBackgroundAlternateBrush" Color="#FF333333"/>
+    <SolidColorBrush x:Key="ItemBackgroundHoverBrush" Color="#FF3E3E46"/>
+    <SolidColorBrush x:Key="ItemBackgroundSelectedBrush" Color="#FF094771"/>
+    <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#FF333333"/>
+    <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="TooltipBackgroundBrush" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="TooltipForegroundBrush" Color="#FFF0F0F0"/>
+
+    <!-- Виртуальная клавиатура (v1.1.0) -->
+    <SolidColorBrush x:Key="KeyNotTestedBrush" Color="#FF505050"/>
+    <SolidColorBrush x:Key="KeyOkBrush" Color="#FF2ECC71"/>
+    <SolidColorBrush x:Key="KeyWarningBrush" Color="#FFF1C40F"/>
+    <SolidColorBrush x:Key="KeyCriticalBrush" Color="#FFE74C3C"/>
+    <SolidColorBrush x:Key="KeyPressedBrush" Color="#FF007ACC"/>
+    <SolidColorBrush x:Key="KeyBorderBrush" Color="#FF606060"/>
+    <SolidColorBrush x:Key="KeyTextBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="KeyBadgeTextBrush" Color="#FFE8E8E8"/>
 </ResourceDictionary>

@@ -373,4 +373,37 @@
   <data name="Close" xml:space="preserve">
     <value>Закрыть</value>
   </data>
+  <data name="LayoutNumpadName" xml:space="preserve">
+    <value>Numpad</value>
+    <comment>Отображаемое имя раскладки «только цифровой блок».</comment>
+  </data>
+
+  <!-- ===== Просмотр истории: панель деталей сессии (v1.1.0) ===== -->
+  <data name="SessionDetailsTitle" xml:space="preserve">
+    <value>Детали сессии</value>
+    <comment>Заголовок развёрнутой панели просмотра выбранной сессии.</comment>
+  </data>
+  <data name="SessionStartLabel" xml:space="preserve">
+    <value>Начало:</value>
+  </data>
+  <data name="SessionEndLabel" xml:space="preserve">
+    <value>Завершение:</value>
+  </data>
+  <data name="SessionLayoutLabel" xml:space="preserve">
+    <value>Раскладка:</value>
+  </data>
+  <data name="SessionNotesLabel" xml:space="preserve">
+    <value>Заметки:</value>
+  </data>
+  <data name="SessionNotesEmpty" xml:space="preserve">
+    <value>Нет заметок</value>
+    <comment>Placeholder, когда у сессии нет заметок.</comment>
+  </data>
+  <data name="SessionTestedKeysLabel" xml:space="preserve">
+    <value>Клавиш в статистике:</value>
+  </data>
+  <data name="NotFinishedMark" xml:space="preserve">
+    <value>—</value>
+    <comment>Прочерк для незавершённой сессии (TargetNullValue).</comment>
+  </data>
 </root>

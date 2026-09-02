@@ -25,6 +25,8 @@
     <ProjectReference Include="..\..\src\KeyboardTester.Core\KeyboardTester.Core.csproj" />
     <ProjectReference Include="..\..\src\KeyboardTester.Infrastructure\KeyboardTester.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\KeyboardTester.Application\KeyboardTester.Application.csproj" />
+    <!-- v1.1.0: тесты UI-конвертеров (бейдж счётчика нажатий на клавише). -->
+    <ProjectReference Include="..\..\src\KeyboardTester.UI\KeyboardTester.UI.csproj" />
   </ItemGroup>
 
 </Project>

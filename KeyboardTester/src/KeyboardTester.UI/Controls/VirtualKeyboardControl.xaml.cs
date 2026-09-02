@@ -17,6 +17,9 @@ namespace KeyboardTester.UI.Controls;
 /// <summary>
 /// Виртуальная клавиатура: отображает клавиши текущей раскладки,
 /// подсвечивает нажатия с анимацией и раскрашивает клавиши по статусу диагностики.
+/// v1.1.0: цвета статусов и рамок берутся из ресурсов темы; нажатая клавиша
+/// выделяется цветом акцента и утолщённой рамкой; в правом верхнем углу клавиши
+/// отображается счётчик нажатий (до 4 символов).
 /// </summary>
 public partial class VirtualKeyboardControl : UserControl
 {
@@ -28,10 +31,13 @@ public partial class VirtualKeyboardControl : UserControl
     private static readonly TimeSpan FadeDuration = TimeSpan.FromMilliseconds(300);
 
     private readonly KeyStatusToBrushConverter _statusToBrushConverter = new();
+    private readonly PressCountToBadgeConverter _pressCountToBadgeConverter = new();
     private readonly Dictionary<KeyViewModel, PropertyChangedEventHandler> _keyHandlers = new();
+    private readonly Dictionary<KeyViewModel, Border> _keyBorders = new();
 
     private MainViewModel? _viewModel;
     private NotifyCollectionChangedEventHandler? _keysChangedHandler;
+    private PropertyChangedEventHandler? _themeChangedHandler;
 
     /// <summary>
     /// Создаёт контрол виртуальной клавиатуры.
@@ -64,17 +70,38 @@ public partial class VirtualKeyboardControl : UserControl
 
         _keysChangedHandler = (_, args) => BuildKeyboard(vm.Keys);
         vm.Keys.CollectionChanged += _keysChangedHandler;
+
+        // Смена темы: кисти клавиш создаются из ресурсов при построении,
+        // поэтому клавиатура перестраивается заново (v1.1.0).
+        _themeChangedHandler = (_, args) =>
+        {
+            if (args.PropertyName == nameof(MainViewModel.CurrentTheme))
+            {
+                BuildKeyboard(vm.Keys);
+            }
+        };
+        vm.PropertyChanged += _themeChangedHandler;
     }
 
     private void DetachViewModel()
     {
-        if (_viewModel != null && _keysChangedHandler != null)
+        if (_viewModel != null)
         {
-            _viewModel.Keys.CollectionChanged -= _keysChangedHandler;
-            _keysChangedHandler = null;
+            if (_keysChangedHandler != null)
+            {
+                _viewModel.Keys.CollectionChanged -= _keysChangedHandler;
+                _keysChangedHandler = null;
+            }
+
+            if (_themeChangedHandler != null)
+            {
+                _viewModel.PropertyChanged -= _themeChangedHandler;
+                _themeChangedHandler = null;
+            }
+
+            _viewModel = null;
         }
 
-        _viewModel = null;
         ClearKeys();
     }
 
@@ -105,29 +132,53 @@ public partial class VirtualKeyboardControl : UserControl
         }
 
         _keyHandlers.Clear();
+        _keyBorders.Clear();
         KeyboardCanvas.Children.Clear();
     }
 
     private Border CreateKeyBorder(KeyViewModel key)
     {
+        var nameText = new TextBlock
+        {
+            Text = key.PhysicalKey.DisplayName,
+            Foreground = GetThemeBrush("KeyTextBrush", Colors.White),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            TextAlignment = TextAlignment.Center,
+            FontSize = 11,
+            TextWrapping = TextWrapping.Wrap,
+        };
+
+        // Счётчик нажатий в правом верхнем углу клавиши (v1.1.0): максимум 4 символа.
+        var badgeText = new TextBlock
+        {
+            Foreground = GetThemeBrush("KeyBadgeTextBrush", Colors.White),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Top,
+            TextAlignment = TextAlignment.Right,
+            FontSize = 9,
+            FontWeight = FontWeights.SemiBold,
+            Margin = new Thickness(0, 2, 4, 0),
+        };
+        badgeText.SetBinding(TextBlock.TextProperty, new Binding(nameof(KeyViewModel.PressCount))
+        {
+            Source = key,
+            Converter = _pressCountToBadgeConverter,
+        });
+
+        var content = new Grid();
+        content.Children.Add(nameText);
+        content.Children.Add(badgeText);
+
         var border = new Border
         {
             Width = key.PhysicalKey.KeySize * BaseUnitSize - KeyGap,
             Height = RowHeight - KeyGap,
             CornerRadius = new CornerRadius(4),
             Background = KeyStatusToBrushConverter.CreateBrush(key.Status),
-            BorderBrush = new SolidColorBrush(Colors.DarkGray),
+            BorderBrush = GetThemeBrush("KeyBorderBrush", Colors.DarkGray),
             BorderThickness = new Thickness(1),
-            Child = new TextBlock
-            {
-                Text = key.PhysicalKey.DisplayName,
-                Foreground = new SolidColorBrush(Colors.White),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                TextAlignment = TextAlignment.Center,
-                FontSize = 11,
-                TextWrapping = TextWrapping.Wrap,
-            },
+            Child = content,
         };
 
         Canvas.SetLeft(border, key.PhysicalKey.Column * BaseUnitSize + KeyGap / 2);
@@ -141,6 +192,8 @@ public partial class VirtualKeyboardControl : UserControl
             Converter = _statusToBrushConverter,
         };
         border.SetBinding(Border.BackgroundProperty, statusBinding);
+
+        _keyBorders[key] = border;
 
         PropertyChangedEventHandler handler = (_, args) => OnKeyPropertyChanged(key, border, args);
         key.PropertyChanged += handler;
@@ -166,9 +219,20 @@ public partial class VirtualKeyboardControl : UserControl
             return;
         }
 
-        Color target = key.IsPressed ? GetPressedColor(key.Status) : GetNormalColor(key.Status);
-        TimeSpan duration = key.IsPressed ? PressDuration : FadeDuration;
-        AnimateBackground(border, target, duration);
+        // Нажатие: цвет акцента темы + утолщённая рамка — визуально отлично
+        // от статусного цвета. Отпускание: возврат к цвету статуса, рамка 1px.
+        if (key.IsPressed)
+        {
+            border.BorderThickness = new Thickness(2);
+            border.BorderBrush = GetThemeBrush("KeyPressedBrush", Color.FromRgb(0x00, 0x7A, 0xCC));
+            AnimateBackground(border, GetAccentColor(), PressDuration);
+        }
+        else
+        {
+            border.BorderThickness = new Thickness(1);
+            border.BorderBrush = GetThemeBrush("KeyBorderBrush", Colors.DarkGray);
+            AnimateBackground(border, GetStatusColor(key.Status), FadeDuration);
+        }
     }
 
     private static void AnimateBackground(Border border, Color targetColor, TimeSpan duration)
@@ -188,23 +252,29 @@ public partial class VirtualKeyboardControl : UserControl
         }
     }
 
-    private static Color GetNormalColor(KeyStatus status) => status switch
+    private static Color GetAccentColor()
     {
-        KeyStatus.NotTested => Color.FromRgb(0x50, 0x50, 0x50),
-        KeyStatus.Ok => Color.FromRgb(0x2E, 0xCC, 0x71),
-        KeyStatus.Warning => Color.FromRgb(0xF1, 0xC4, 0x0F),
-        KeyStatus.Critical => Color.FromRgb(0xE7, 0x4C, 0x3C),
+        return GetThemeBrush("KeyPressedBrush", Color.FromRgb(0x00, 0x7A, 0xCC)).Color;
+    }
+
+    private static Color GetStatusColor(KeyStatus status) => status switch
+    {
+        KeyStatus.NotTested => GetThemeBrush("KeyNotTestedBrush", Color.FromRgb(0x50, 0x50, 0x50)).Color,
+        KeyStatus.Ok => GetThemeBrush("KeyOkBrush", Color.FromRgb(0x2E, 0xCC, 0x71)).Color,
+        KeyStatus.Warning => GetThemeBrush("KeyWarningBrush", Color.FromRgb(0xF1, 0xC4, 0x0F)).Color,
+        KeyStatus.Critical => GetThemeBrush("KeyCriticalBrush", Color.FromRgb(0xE7, 0x4C, 0x3C)).Color,
         _ => Colors.Gray,
     };
 
-    private static Color GetPressedColor(KeyStatus status) => status switch
+    private static SolidColorBrush GetThemeBrush(string resourceKey, Color fallback)
     {
-        KeyStatus.NotTested => Color.FromRgb(120, 120, 120),
-        KeyStatus.Ok => Color.FromRgb(88, 214, 141),
-        KeyStatus.Warning => Color.FromRgb(245, 215, 110),
-        KeyStatus.Critical => Color.FromRgb(236, 112, 99),
-        _ => Colors.LightGray,
-    };
+        if (System.Windows.Application.Current?.TryFindResource(resourceKey) is SolidColorBrush brush)
+        {
+            return new SolidColorBrush(brush.Color);
+        }
+
+        return new SolidColorBrush(fallback);
+    }
 
     private static ToolTip CreateTooltip(KeyViewModel key)
     {

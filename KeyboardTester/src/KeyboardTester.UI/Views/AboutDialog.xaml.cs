@@ -1,6 +1,6 @@
 using System.Globalization;
-using System.Reflection;
 using System.Windows;
+using KeyboardTester.UI.Services;
 using Res = KeyboardTester.UI.Resources;
 
 namespace KeyboardTester.UI.Views;
@@ -16,14 +16,6 @@ public partial class AboutDialog : Window
     public AboutDialog()
     {
         InitializeComponent();
-        VersionText.Text = string.Format(CultureInfo.CurrentCulture, Res.Strings.Version, GetVersion());
-    }
-
-    private static string GetVersion()
-    {
-        return Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-            ?? Res.Strings.VersionUnknown;
+        VersionText.Text = string.Format(CultureInfo.CurrentCulture, Res.Strings.Version, AppVersion.Current);
     }
 }

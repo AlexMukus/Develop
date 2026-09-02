@@ -6,11 +6,14 @@
     <UserControl.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibility"/>
         <converters:KeyStatusToDescriptionConverter x:Key="StatusToDescription"/>
+        <converters:KeyStatusToBrushConverter x:Key="StatusToBrush"/>
+        <converters:KeyboardLayoutToDescriptionConverter x:Key="LayoutToDescription"/>
     </UserControl.Resources>
 
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -32,16 +35,122 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6">
             <Button Content="{x:Static res:Strings.SaveCurrentSession}" Padding="10,4" Margin="0,0,6,0"
-                    Foreground="{DynamicResource TextBrush}"
                     Command="{Binding SaveSessionCommand}"/>
-            <Button Content="{x:Static res:Strings.Delete}" Padding="10,4" Margin="0,0,6,0" Click="DeleteButton_Click"
-                    Foreground="{DynamicResource TextBrush}"/>
+            <Button Content="{x:Static res:Strings.Delete}" Padding="10,4" Margin="0,0,6,0" Click="DeleteButton_Click"/>
             <Button Content="{x:Static res:Strings.CompareLastTwo}" Padding="10,4"
-                    Foreground="{DynamicResource TextBrush}"
                     Command="{Binding CompareSessionsCommand}"/>
         </StackPanel>
 
-        <Border Grid.Row="2"
+        <!-- Просмотр истории: развёрнутая панель деталей выбранной сессии (v1.1.0) -->
+        <Expander Grid.Row="2"
+                  Margin="0,4"
+                  IsExpanded="{Binding IsSessionDetailsExpanded, Mode=TwoWay}"
+                  Visibility="{Binding SelectedSession, Converter={StaticResource NullToVisibility}}"
+                  Background="{DynamicResource PanelBackgroundBrush}"
+                  BorderBrush="{DynamicResource PanelBorderBrush}"
+                  BorderThickness="1"
+                  Padding="4">
+            <Expander.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{x:Static res:Strings.SessionDetailsTitle}" FontWeight="Bold"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text=" — " Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{Binding SelectedSession.DisplayName}" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextBrush}"/>
+                </StackPanel>
+            </Expander.Header>
+
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Метаданные сессии -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SessionDetailLabels"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SessionDetailLabels"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SessionDetailLabels"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="{x:Static res:Strings.SessionStartLabel}" FontWeight="SemiBold"
+                               Margin="0,0,6,0" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding SelectedSession.Session.StartTime, StringFormat=g}" Margin="0,0,16,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+
+                    <TextBlock Grid.Column="2" Text="{x:Static res:Strings.SessionEndLabel}" FontWeight="SemiBold"
+                               Margin="0,0,6,0" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Grid.Column="3" Margin="0,0,16,0"
+                               Text="{Binding SelectedSession.Session.EndTime, StringFormat=g, TargetNullValue={x:Static res:Strings.NotFinishedMark}}"
+                               Foreground="{DynamicResource TextBrush}"/>
+
+                    <TextBlock Grid.Column="4" Text="{x:Static res:Strings.SessionLayoutLabel}" FontWeight="SemiBold"
+                               Margin="0,0,6,0" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Grid.Column="5"
+                               Text="{Binding SelectedSession.Session.Layout, Converter={StaticResource LayoutToDescription}}"
+                               Foreground="{DynamicResource TextBrush}"/>
+                </Grid>
+
+                <!-- Заметки -->
+                <TextBlock Grid.Row="1" Margin="0,6,0,0" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextBrush}"
+                           Text="{Binding SelectedSession.Session.Notes, TargetNullValue={x:Static res:Strings.SessionNotesEmpty}}"/>
+
+                <!-- Сводка -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,4">
+                    <TextBlock Text="{x:Static res:Strings.ColumnDuration}" FontWeight="SemiBold" Margin="0,0,6,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{Binding SelectedSession.Session.Duration, StringFormat=hh\:mm\:ss}" Margin="0,0,16,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{x:Static res:Strings.ColumnPresses}" FontWeight="SemiBold" Margin="0,0,6,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{Binding SelectedSession.TotalPressCount}" Margin="0,0,16,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{x:Static res:Strings.SessionTestedKeysLabel}" FontWeight="SemiBold" Margin="0,0,6,0"
+                               Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock Text="{Binding SelectedSession.StatisticsList.Count}"
+                               Foreground="{DynamicResource TextBrush}"/>
+                </StackPanel>
+
+                <!-- Статистика клавиш сессии -->
+                <DataGrid Grid.Row="3"
+                          MinHeight="120" MaxHeight="260"
+                          ItemsSource="{Binding SelectedSession.StatisticsList}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserSortColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static res:Strings.ColumnKey}" Binding="{Binding Key.DisplayName}" Width="*"/>
+                        <DataGridTextColumn Header="{x:Static res:Strings.ColumnPressCount}" Binding="{Binding PressCount}" Width="Auto"/>
+                        <DataGridTextColumn Header="{x:Static res:Strings.ColumnAvgInterval}"
+                                            Binding="{Binding AverageIntervalMs, StringFormat=F1}" Width="Auto"/>
+                        <DataGridTextColumn Header="{x:Static res:Strings.ColumnAvgHold}"
+                                            Binding="{Binding AverageHoldDurationMs, StringFormat=F1}" Width="Auto"/>
+                        <DataGridTextColumn Header="{x:Static res:Strings.ColumnChatter}" Binding="{Binding ChatterEvents.Count}" Width="Auto"/>
+                        <DataGridTemplateColumn Header="{x:Static res:Strings.ColumnStatus}" Width="*" MinWidth="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Padding="8,2" CornerRadius="3" HorizontalAlignment="Stretch"
+                                            Background="{Binding Status, Converter={StaticResource StatusToBrush}}">
+                                        <TextBlock Foreground="White" TextAlignment="Center"
+                                                   Text="{Binding Status, Converter={StaticResource StatusToDescription}}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Expander>
+
+        <Border Grid.Row="3"
                 Visibility="{Binding LastComparison, Converter={StaticResource NullToVisibility}}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1"
@@ -61,10 +170,13 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,1">
-                                    <TextBlock Text="{Binding Key.DisplayName}" FontWeight="SemiBold" Margin="0,0,6,0"/>
-                                    <TextBlock Text="{Binding OldStatus, Converter={StaticResource StatusToDescription}}"/>
-                                    <TextBlock Text=" → " xml:space="preserve"/>
-                                    <TextBlock Text="{Binding NewStatus, Converter={StaticResource StatusToDescription}}"/>
+                                    <TextBlock Text="{Binding Key.DisplayName}" FontWeight="SemiBold" Margin="0,0,6,0"
+                                               Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="{Binding OldStatus, Converter={StaticResource StatusToDescription}}"
+                                               Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text=" → " xml:space="preserve" Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="{Binding NewStatus, Converter={StaticResource StatusToDescription}}"
+                                               Foreground="{DynamicResource TextBrush}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

@@ -1,10 +1,12 @@
+using System.Collections.ObjectModel;
 using KeyboardTester.Core.Enums;
 using KeyboardTester.Core.Models;
 
 namespace KeyboardTester.Application.ViewModels;
 
 /// <summary>
-/// ViewModel сохранённой тестовой сессии для отображения в списке истории.
+/// ViewModel сохранённой тестовой сессии для отображения в списке истории
+/// и в панели просмотра деталей сессии (v1.1.0).
 /// </summary>
 public sealed class TestSessionViewModel
 {
@@ -14,6 +16,11 @@ public sealed class TestSessionViewModel
     public TestSessionViewModel(TestSession session)
     {
         Session = session ?? throw new ArgumentNullException(nameof(session));
+
+        foreach (KeyStatistics statistics in session.Statistics.Values.OrderByDescending(s => s.PressCount))
+        {
+            StatisticsList.Add(statistics);
+        }
     }
 
     /// <summary>
@@ -40,4 +47,10 @@ public sealed class TestSessionViewModel
     /// Количество клавиш со статусом Warning или Critical.
     /// </summary>
     public int ProblematicKeysCount => Session.Statistics.Values.Count(s => s.Status is KeyStatus.Warning or KeyStatus.Critical);
+
+    /// <summary>
+    /// Статистика клавиш сессии, отсортированная по количеству нажатий,
+    /// для таблицы в панели просмотра истории.
+    /// </summary>
+    public ObservableCollection<KeyStatistics> StatisticsList { get; } = [];
 }

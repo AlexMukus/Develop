@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Windows;
 using KeyboardTester.Application.ViewModels;
 using KeyboardTester.Core.Interfaces;
@@ -28,9 +27,8 @@ public partial class MainWindow : Window
 
         DataContext = _viewModel;
 
-        string? version = Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        VersionText.Text = $"v{(version ?? "1.0.0")}";
+        // Версия подтягивается из атрибутов сборки (Directory.Build.props, v1.1.0).
+        VersionText.Text = $"v{AppVersion.Current}";
 
         _viewModel.OpenSettingsRequested += OnOpenSettingsRequested;
         _viewModel.OpenAboutRequested += OnOpenAboutRequested;

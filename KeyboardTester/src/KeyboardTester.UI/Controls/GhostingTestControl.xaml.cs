@@ -17,13 +17,14 @@ public partial class GhostingTestControl : UserControl
     private const double RowHeight = 55;
     private const double KeyGap = 4;
 
-    private static readonly Brush PressedBrush = new SolidColorBrush(Color.FromRgb(0x2E, 0xCC, 0x71));
-    private static readonly Brush NormalBrush = new SolidColorBrush(Color.FromRgb(0x50, 0x50, 0x50));
+    private static readonly Color PressedColor = Color.FromRgb(0x2E, 0xCC, 0x71);
+    private static readonly Color NormalColor = Color.FromRgb(0x50, 0x50, 0x50);
 
     private readonly Dictionary<KeyViewModel, (Border Border, PropertyChangedEventHandler Handler)> _keyVisuals = new();
 
     private MainViewModel? _viewModel;
     private NotifyCollectionChangedEventHandler? _keysChangedHandler;
+    private PropertyChangedEventHandler? _themeChangedHandler;
 
     /// <summary>
     /// Создаёт контрол ghosting-теста.
@@ -68,17 +69,38 @@ public partial class GhostingTestControl : UserControl
 
         _keysChangedHandler = (_, _) => BuildMatrix(vm.Keys);
         vm.Keys.CollectionChanged += _keysChangedHandler;
+
+        // Смена темы: кисти матрицы создаются из ресурсов при построении,
+        // поэтому матрица перестраивается заново (v1.1.0).
+        _themeChangedHandler = (_, args) =>
+        {
+            if (args.PropertyName == nameof(MainViewModel.CurrentTheme))
+            {
+                BuildMatrix(vm.Keys);
+            }
+        };
+        vm.PropertyChanged += _themeChangedHandler;
     }
 
     private void DetachViewModel()
     {
-        if (_viewModel != null && _keysChangedHandler != null)
+        if (_viewModel != null)
         {
-            _viewModel.Keys.CollectionChanged -= _keysChangedHandler;
-            _keysChangedHandler = null;
+            if (_keysChangedHandler != null)
+            {
+                _viewModel.Keys.CollectionChanged -= _keysChangedHandler;
+                _keysChangedHandler = null;
+            }
+
+            if (_themeChangedHandler != null)
+            {
+                _viewModel.PropertyChanged -= _themeChangedHandler;
+                _themeChangedHandler = null;
+            }
+
+            _viewModel = null;
         }
 
-        _viewModel = null;
         ClearKeys();
     }
 
@@ -89,6 +111,11 @@ public partial class GhostingTestControl : UserControl
         double maxRight = 0;
         double maxBottom = 0;
 
+        Brush pressedBrush = ThemeBrush("KeyPressedBrush", PressedColor);
+        Brush normalBrush = ThemeBrush("KeyNotTestedBrush", NormalColor);
+        Brush borderBrush = ThemeBrush("KeyBorderBrush", Colors.DarkGray);
+        Brush textBrush = ThemeBrush("KeyTextBrush", Colors.White);
+
         foreach (KeyViewModel key in keys)
         {
             var border = new Border
@@ -96,13 +123,13 @@ public partial class GhostingTestControl : UserControl
                 Width = key.PhysicalKey.KeySize * BaseUnitSize - KeyGap,
                 Height = RowHeight - KeyGap,
                 CornerRadius = new CornerRadius(4),
-                Background = key.IsPressed ? PressedBrush : NormalBrush,
-                BorderBrush = new SolidColorBrush(Colors.DarkGray),
+                Background = key.IsPressed ? pressedBrush : normalBrush,
+                BorderBrush = borderBrush,
                 BorderThickness = new Thickness(1),
                 Child = new TextBlock
                 {
                     Text = key.PhysicalKey.DisplayName,
-                    Foreground = new SolidColorBrush(Colors.White),
+                    Foreground = textBrush,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     TextAlignment = TextAlignment.Center,
@@ -119,7 +146,7 @@ public partial class GhostingTestControl : UserControl
                 if (args.PropertyName == nameof(KeyViewModel.IsPressed))
                 {
                     // Мгновенная подсветка без анимации для максимальной отзывчивости.
-                    border.Background = key.IsPressed ? PressedBrush : NormalBrush;
+                    border.Background = key.IsPressed ? pressedBrush : normalBrush;
                 }
             };
             key.PropertyChanged += handler;
@@ -132,6 +159,16 @@ public partial class GhostingTestControl : UserControl
 
         GhostingCanvas.Width = maxRight * BaseUnitSize + KeyGap;
         GhostingCanvas.Height = maxBottom * RowHeight + KeyGap;
+    }
+
+    private static Brush ThemeBrush(string resourceKey, Color fallback)
+    {
+        if (System.Windows.Application.Current?.TryFindResource(resourceKey) is SolidColorBrush brush)
+        {
+            return new SolidColorBrush(brush.Color);
+        }
+
+        return new SolidColorBrush(fallback);
     }
 
     private void ClearKeys()

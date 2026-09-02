@@ -161,6 +161,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private TestSessionViewModel? _selectedSession;
 
     /// <summary>
+    /// Развёрнута ли панель просмотра деталей выбранной сессии (v1.1.0).
+    /// </summary>
+    [ObservableProperty]
+    private bool _isSessionDetailsExpanded;
+
+    /// <summary>
     /// Последнее сравнение двух сессий.
     /// </summary>
     [ObservableProperty]
@@ -390,6 +396,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             _rawInputCapture.SelectDevice(value.DevicePath);
         }
+    }
+
+    partial void OnSelectedSessionChanged(TestSessionViewModel? value)
+    {
+        // Панель просмотра деталей сессии автоматически сворачивается,
+        // когда выбор в списке истории снимается.
+        IsSessionDetailsExpanded = value != null;
     }
 
     private void SubscribeEvents()

@@ -1,12 +1,16 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using KeyboardTester.Application.ViewModels;
 using LiveChartsCore;
-using Res = KeyboardTester.UI.Resources;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using Res = KeyboardTester.UI.Resources;
+using SkiaSharp;
 
 namespace KeyboardTester.UI.Controls;
 
@@ -14,6 +18,8 @@ namespace KeyboardTester.UI.Controls;
 /// Панель live-графиков: интервалы между нажатиями и время удержания клавиш.
 /// Подписывается на <see cref="MainViewModel.PressIntervalPoints"/> и
 /// <see cref="MainViewModel.HoldDurationPoints"/> и сам ведёт серии LiveCharts.
+/// v1.1.0: цвета осей, сетки и линий берутся из ресурсов темы и обновляются
+/// при её смене (реакция на <see cref="MainViewModel.CurrentTheme"/>).
 /// </summary>
 public partial class ChartsPanelControl : UserControl
 {
@@ -21,10 +27,14 @@ public partial class ChartsPanelControl : UserControl
 
     private readonly ObservableCollection<DateTimePoint> _intervalValues = new();
     private readonly ObservableCollection<DateTimePoint> _holdValues = new();
+    private readonly LineSeries<DateTimePoint> _intervalSeries;
+    private readonly LineSeries<DateTimePoint> _holdSeries;
+    private readonly Axis[] _allAxes;
 
     private MainViewModel? _viewModel;
     private NotifyCollectionChangedEventHandler? _intervalHandler;
     private NotifyCollectionChangedEventHandler? _holdHandler;
+    private PropertyChangedEventHandler? _themeHandler;
 
     /// <summary>
     /// Создаёт панель графиков.
@@ -33,38 +43,37 @@ public partial class ChartsPanelControl : UserControl
     {
         InitializeComponent();
 
-        IntervalChart.Series = new ISeries[]
+        _intervalSeries = new LineSeries<DateTimePoint>
         {
-            new LineSeries<DateTimePoint>
-            {
-                Values = _intervalValues,
-                GeometrySize = 4,
-                Fill = null,
-                Name = Res.Strings.IntervalSeriesName,
-            },
+            Values = _intervalValues,
+            GeometrySize = 4,
+            Fill = null,
+            Name = Res.Strings.IntervalSeriesName,
         };
-        HoldChart.Series = new ISeries[]
+        _holdSeries = new LineSeries<DateTimePoint>
         {
-            new LineSeries<DateTimePoint>
-            {
-                Values = _holdValues,
-                GeometrySize = 4,
-                Fill = null,
-                Name = Res.Strings.HoldSeriesName,
-            },
+            Values = _holdValues,
+            GeometrySize = 4,
+            Fill = null,
+            Name = Res.Strings.HoldSeriesName,
         };
 
-        Axis[] timeAxes =
-        {
-            new DateTimeAxis(TimeSpan.FromMinutes(1), static date => date.ToString("mm\\:ss")),
-        };
-        IntervalChart.XAxes = timeAxes;
-        HoldChart.XAxes = new Axis[]
-        {
-            new DateTimeAxis(TimeSpan.FromMinutes(1), static date => date.ToString("mm\\:ss")),
-        };
-        IntervalChart.YAxes = new Axis[] { new Axis { MinLimit = 0 } };
-        HoldChart.YAxes = new Axis[] { new Axis { MinLimit = 0 } };
+        IntervalChart.Series = new ISeries[] { _intervalSeries };
+        HoldChart.Series = new ISeries[] { _holdSeries };
+
+        var intervalXAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), static date => date.ToString("mm\\:ss"));
+        var holdXAxis = new DateTimeAxis(TimeSpan.FromMinutes(1), static date => date.ToString("mm\\:ss"));
+        var intervalYAxis = new Axis { MinLimit = 0 };
+        var holdYAxis = new Axis { MinLimit = 0 };
+
+        IntervalChart.XAxes = new Axis[] { intervalXAxis };
+        HoldChart.XAxes = new Axis[] { holdXAxis };
+        IntervalChart.YAxes = new Axis[] { intervalYAxis };
+        HoldChart.YAxes = new Axis[] { holdYAxis };
+
+        _allAxes = new[] { intervalXAxis, holdXAxis, intervalYAxis, holdYAxis };
+
+        ApplyChartTheme();
 
         DataContextChanged += OnDataContextChanged;
         Loaded += OnLoaded;
@@ -116,6 +125,16 @@ public partial class ChartsPanelControl : UserControl
         vm.PressIntervalPoints.CollectionChanged += _intervalHandler;
         vm.HoldDurationPoints.CollectionChanged += _holdHandler;
 
+        // Перекраска графиков при смене темы оформления.
+        _themeHandler = (_, args) =>
+        {
+            if (args.PropertyName == nameof(MainViewModel.CurrentTheme))
+            {
+                ApplyChartTheme();
+            }
+        };
+        vm.PropertyChanged += _themeHandler;
+
         UpdateHintVisibility();
     }
 
@@ -135,12 +154,52 @@ public partial class ChartsPanelControl : UserControl
                 _holdHandler = null;
             }
 
+            if (_themeHandler != null)
+            {
+                _viewModel.PropertyChanged -= _themeHandler;
+                _themeHandler = null;
+            }
+
             _viewModel = null;
         }
 
         _intervalValues.Clear();
         _holdValues.Clear();
         UpdateHintVisibility();
+    }
+
+    /// <summary>
+    /// Применяет цвета текущей темы к осям, сетке и линиям графиков.
+    /// Кисти ChartForegroundBrush/ChartGridBrush/AccentBrush определены
+    /// в Themes/Dark.xaml и Themes/Light.xaml.
+    /// </summary>
+    private void ApplyChartTheme()
+    {
+        Color labelColor = ThemeColor("ChartForegroundBrush", Color.FromRgb(0xCC, 0xCC, 0xCC));
+        Color gridColor = ThemeColor("ChartGridBrush", Color.FromRgb(0x3E, 0x3E, 0x3E));
+        Color seriesColor = ThemeColor("AccentBrush", Color.FromRgb(0x00, 0x7A, 0xCC));
+
+        var labelPaint = new SolidColorPaint(ToSkia(labelColor));
+        var gridPaint = new SolidColorPaint(ToSkia(gridColor)) { StrokeThickness = 1 };
+        var seriesPaint = new SolidColorPaint(ToSkia(seriesColor)) { StrokeThickness = 2 };
+
+        foreach (Axis axis in _allAxes)
+        {
+            axis.LabelsPaint = labelPaint;
+            axis.SeparatorsPaint = gridPaint;
+        }
+
+        _intervalSeries.Stroke = seriesPaint;
+        _holdSeries.Stroke = seriesPaint;
+    }
+
+    private static SKColor ToSkia(Color color) => new(color.R, color.G, color.B, color.A);
+
+    private static Color ThemeColor(string resourceKey, Color fallback)
+    {
+        return System.Windows.Application.Current?.TryFindResource(resourceKey) is SolidColorBrush brush
+            ? brush.Color
+            : fallback;
     }
 
     private void OnPointsChanged(

@@ -250,5 +250,23 @@ namespace KeyboardTester.UI.Resources
         public static string CheckUpdates => ResourceManager.GetString("CheckUpdates", resourceCulture);
 
         public static string Close => ResourceManager.GetString("Close", resourceCulture);
+
+        public static string LayoutNumpadName => ResourceManager.GetString("LayoutNumpadName", resourceCulture);
+
+        public static string SessionDetailsTitle => ResourceManager.GetString("SessionDetailsTitle", resourceCulture);
+
+        public static string SessionStartLabel => ResourceManager.GetString("SessionStartLabel", resourceCulture);
+
+        public static string SessionEndLabel => ResourceManager.GetString("SessionEndLabel", resourceCulture);
+
+        public static string SessionLayoutLabel => ResourceManager.GetString("SessionLayoutLabel", resourceCulture);
+
+        public static string SessionNotesLabel => ResourceManager.GetString("SessionNotesLabel", resourceCulture);
+
+        public static string SessionNotesEmpty => ResourceManager.GetString("SessionNotesEmpty", resourceCulture);
+
+        public static string SessionTestedKeysLabel => ResourceManager.GetString("SessionTestedKeysLabel", resourceCulture);
+
+        public static string NotFinishedMark => ResourceManager.GetString("NotFinishedMark", resourceCulture);
     }
 }
