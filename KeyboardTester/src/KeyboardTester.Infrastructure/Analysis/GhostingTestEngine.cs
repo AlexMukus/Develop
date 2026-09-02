@@ -16,6 +16,8 @@ public sealed class GhostingTestEngine : IGhostingTestEngine, IDisposable
     private readonly List<GhostingTestResult> _results = new();
     private readonly object _lock = new();
 
+    private const int NkroThreshold = 6;
+
     private bool _isRunning;
     private int _maxSimultaneousKeys;
 
@@ -111,14 +113,7 @@ public sealed class GhostingTestEngine : IGhostingTestEngine, IDisposable
                 _maxSimultaneousKeys = _currentlyPressed.Count;
             }
 
-            IReadOnlyList<PhysicalKey> pressed = _currentlyPressed.ToList();
-            result = new GhostingTestResult(
-                DateTime.Now,
-                pressed,
-                pressed,
-                pressed.Count > 6,
-                pressed.Count);
-
+            result = BuildResult();
             _results.Add(result);
         }
 
@@ -133,10 +128,40 @@ public sealed class GhostingTestEngine : IGhostingTestEngine, IDisposable
             return;
         }
 
+        GhostingTestResult? result = null;
+
         lock (_lock)
         {
+            // Отпускание убирает клавишу из удерживаемых даже вне теста,
+            // чтобы состояние не «залипало» между запусками.
             _currentlyPressed.Remove(key);
+
+            if (_isRunning)
+            {
+                result = BuildResult();
+                _results.Add(result);
+            }
         }
+
+        if (result != null)
+        {
+            TestResultUpdated?.Invoke(this, result);
+        }
+    }
+
+    private GhostingTestResult BuildResult()
+    {
+        IReadOnlyList<PhysicalKey> pressed = _currentlyPressed.ToList();
+
+        // NKRO определяется по максимуму за весь тест: если пользователь
+        // одновременно удерживал больше порога (6KRO) клавиш, признак
+        // остаётся установленным и после их отпускания.
+        return new GhostingTestResult(
+            DateTime.Now,
+            pressed,
+            pressed,
+            _maxSimultaneousKeys > NkroThreshold,
+            _maxSimultaneousKeys);
     }
 
     private PhysicalKey? FindKey(uint scanCode)

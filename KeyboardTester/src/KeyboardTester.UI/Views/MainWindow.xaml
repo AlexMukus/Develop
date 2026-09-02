@@ -84,7 +84,7 @@
                         <controls:ChartsPanelControl/>
                     </TabItem>
                     <TabItem Header="{x:Static res:Strings.TabGhosting}"
-                             IsSelected="{Binding IsGhostingTestActive, Mode=OneWay}">
+                             IsSelected="{Binding IsGhostingTestActive, Mode=TwoWay}">
                         <controls:GhostingTestControl/>
                     </TabItem>
                 </TabControl>

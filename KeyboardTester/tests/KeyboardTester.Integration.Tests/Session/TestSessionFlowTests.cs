@@ -153,7 +153,7 @@ public class TestSessionFlowTests
         var results = new List<GhostingTestResult>();
         engine.TestResultUpdated += (_, result) => results.Add(result);
 
-        // Act: последовательно зажимаем 8 клавиш, затем отпускаем.
+        // Act: последовательно зажимаем 8 клавиш.
         engine.StartTest();
         uint[] scanCodes = { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
@@ -162,17 +162,27 @@ public class TestSessionFlowTests
             capture.Press(scanCode, index * 1_000);
         }
 
+        // Assert на пике: 8 клавиш удерживается, NKRO обнаружен (> 6 клавиш).
+        results.Should().HaveCount(8);
+        GhostingTestResult peak = results.Last();
+        peak.MaxSimultaneousKeys.Should().Be(8);
+        peak.PressedKeys.Should().HaveCount(8);
+        peak.RegisteredKeys.Should().HaveCount(8);
+        peak.IsNKeyRollover.Should().BeTrue();
+
+        // Act: отпускаем все клавиши — событие возникает и на отпускание.
         foreach ((uint scanCode, int index) in scanCodes.Select((sc, i) => (sc, i)))
         {
             capture.Release(scanCode, 100_000 + index * 1_000);
         }
 
-        // Assert: каждое нажатие зафиксировано, NKRO обнаружен (> 6 клавиш).
-        results.Should().HaveCount(8);
+        // Assert после отпускания: нажатых нет, но максимум и NKRO
+        // сохраняются по итогам всего теста.
+        results.Should().HaveCount(16);
         GhostingTestResult last = results.Last();
+        last.PressedKeys.Should().BeEmpty();
         last.MaxSimultaneousKeys.Should().Be(8);
         last.IsNKeyRollover.Should().BeTrue();
-        last.RegisteredKeys.Should().HaveCount(8);
         engine.CurrentlyPressedKeys.Should().BeEmpty();
     }
 
@@ -194,6 +204,26 @@ public class TestSessionFlowTests
 
         results.Last().MaxSimultaneousKeys.Should().Be(6);
         results.Last().IsNKeyRollover.Should().BeFalse();
+    }
+
+    [Fact]
+    public void GhostingEngine_StoppedTest_DoesNotEmitResults()
+    {
+        using var capture = new FakeRawInputCapture();
+        using var engine = new GhostingTestEngine(capture, new LayoutProvider());
+        var results = new List<GhostingTestResult>();
+        engine.TestResultUpdated += (_, result) => results.Add(result);
+
+        engine.StartTest();
+        capture.Press(0x02, 0);
+        engine.StopTest();
+        capture.Release(0x02, 1_000);
+        capture.Press(0x03, 2_000);
+
+        // После остановки события не генерируются, но состояние удержания
+        // корректно очищается отпусканием (результат не публикуется).
+        results.Should().ContainSingle();
+        engine.CurrentlyPressedKeys.Should().BeEmpty();
     }
 
     [Fact]

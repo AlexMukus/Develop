@@ -264,9 +264,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void StartGhostingTest()
     {
-        _ghostingTestEngine.StartTest();
         IsGhostingTestActive = true;
-        EnsureCaptureStarted();
     }
 
     /// <summary>
@@ -275,9 +273,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void StopGhostingTest()
     {
-        _ghostingTestEngine.StopTest();
         IsGhostingTestActive = false;
-        MaybeStopCapture();
     }
 
     /// <summary>
@@ -359,6 +355,23 @@ public partial class MainViewModel : ObservableObject, IDisposable
     #endregion
 
     #region Event handlers
+
+    partial void OnIsGhostingTestActiveChanged(bool value)
+    {
+        // Единственная точка синхронизации движка с UI: активация теста
+        // (кнопкой на панели или выбором вкладки) запускает движок и захват,
+        // деактивация — останавливает.
+        if (value)
+        {
+            _ghostingTestEngine.StartTest();
+            EnsureCaptureStarted();
+        }
+        else
+        {
+            _ghostingTestEngine.StopTest();
+            MaybeStopCapture();
+        }
+    }
 
     partial void OnSelectedLayoutChanged(KeyboardLayout value)
     {
