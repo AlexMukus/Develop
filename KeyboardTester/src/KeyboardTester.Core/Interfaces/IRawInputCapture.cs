@@ -37,4 +37,10 @@ public interface IRawInputCapture : IDisposable
     /// </summary>
     /// <param name="devicePath">Путь устройства.</param>
     void SelectDevice(string devicePath);
+
+    /// <summary>
+    /// Принудительно выполнить повторный поиск подключённых клавиатур
+    /// и оповестить о подключениях/отключениях. Не влияет на поток захвата ввода.
+    /// </summary>
+    void RefreshDevices();
 }

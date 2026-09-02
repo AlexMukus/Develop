@@ -1,4 +1,4 @@
-# Сборка portable-версии KeyboardTester (self-contained, single-file EXE).
+﻿# Сборка portable-версии KeyboardTester (self-contained, single-file EXE).
 # Использование:
 #   .\build-portable.ps1                          — Release, версия из git describe
 #   .\build-portable.ps1 -Configuration Debug     — другая конфигурация

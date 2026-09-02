@@ -2,18 +2,21 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using KeyboardTester.Core.Dto;
+using KeyboardTester.Core.Enums;
 using KeyboardTester.Core.Interfaces;
 using KeyboardTester.Core.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace KeyboardTester.Infrastructure.Input;
 
 /// <summary>
 /// Реализация захвата событий клавиатуры через Windows Raw Input.
 /// </summary>
-public sealed class RawInputCapture : IRawInputCapture
+public sealed partial class RawInputCapture : IRawInputCapture
 {
     private readonly INativeMethods _nativeMethods;
     private readonly ILogger<RawInputCapture> _logger;
@@ -27,6 +30,7 @@ public sealed class RawInputCapture : IRawInputCapture
     private bool _isCapturing;
     private string? _selectedDevicePath;
     private long _qpcFrequency;
+    private readonly System.Threading.Timer? _deviceScanTimer;
 
     /// <inheritdoc />
     public event EventHandler<RawKeyEventArgs>? KeyPressed;
@@ -72,6 +76,15 @@ public sealed class RawInputCapture : IRawInputCapture
             _logger.LogWarning("QueryPerformanceFrequency не удался; используется частота по умолчанию.");
             _qpcFrequency = 10_000_000;
         }
+
+        // Периодический поиск клавиатур: первый опрос сразу при создании сервиса
+        // (запуск приложения) и далее каждые 5 секунд. EnumerateDevices не мешает
+        // захвату ввода: WinAPI-выовы кратковременны, общие данные под lock.
+        _deviceScanTimer = new System.Threading.Timer(
+            _ => SafeEnumerateDevices(),
+            null,
+            TimeSpan.Zero,
+            TimeSpan.FromSeconds(5));
     }
 
     /// <inheritdoc />
@@ -123,8 +136,15 @@ public sealed class RawInputCapture : IRawInputCapture
     /// <inheritdoc />
     public void Dispose()
     {
+        _deviceScanTimer?.Dispose();
         StopCapture();
         _hwndSource?.Dispose();
+    }
+
+    /// <inheritdoc />
+    public void RefreshDevices()
+    {
+        EnumerateDevices();
     }
 
     private void EnsureHwndSource()
@@ -268,6 +288,22 @@ public sealed class RawInputCapture : IRawInputCapture
         }
     }
 
+    /// <summary>
+    /// Обёртка периодического опроса: любые ошибки WinAPI/реестра гасятся,
+    /// чтобы фоновый таймер не уронил приложение.
+    /// </summary>
+    private void SafeEnumerateDevices()
+    {
+        try
+        {
+            EnumerateDevices();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Периодический опрос устройств завершился ошибкой.");
+        }
+    }
+
     private void EnumerateDevices()
     {
         uint count = 0;
@@ -308,7 +344,7 @@ public sealed class RawInputCapture : IRawInputCapture
             }
 
             paths[item.hDevice] = path!;
-            keyboards.Add(new InputDevice(path!, null, null, 0, 0));
+            keyboards.Add(CreateDevice(path!));
         }
 
         List<InputDevice> connected;
@@ -363,6 +399,112 @@ public sealed class RawInputCapture : IRawInputCapture
         }
 
         return buffer.ToString();
+    }
+
+    /// <summary>
+    /// Создаёт модель устройства с классификацией типа подключения
+    /// (ноутбучная / проводная / Bluetooth) и данными из реестра.
+    /// </summary>
+    private static InputDevice CreateDevice(string devicePath)
+    {
+        (uint vendorId, uint productId) = ParseVidPid(devicePath);
+        KeyboardConnectionType connectionType = ClassifyConnection(devicePath);
+        (string? productName, string? manufacturer) = ReadDeviceRegistryInfo(devicePath);
+
+        return new InputDevice(devicePath, productName, manufacturer, vendorId, productId, connectionType);
+    }
+
+    /// <summary>
+    /// Разбирает VID/PID из пути устройства вида HID VID_xxxx PID_yyyy.
+    /// </summary>
+    private static (uint VendorId, uint ProductId) ParseVidPid(string devicePath)
+    {
+        Match match = VidPidRegex().Match(devicePath);
+        if (!match.Success)
+        {
+            return (0, 0);
+        }
+
+        uint vendorId = uint.Parse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber);
+        uint productId = uint.Parse(match.Groups[2].Value, System.Globalization.NumberStyles.HexNumber);
+        return (vendorId, productId);
+    }
+
+    [GeneratedRegex(@"VID_([0-9A-Fa-f]{4})&PID_([0-9A-Fa-f]{4})", RegexOptions.CultureInvariant)]
+    private static partial Regex VidPidRegex();
+
+    /// <summary>
+    /// Определяет тип подключения клавиатуры по префиксу пути устройства:
+    /// ACPI/PS-2/I8042 — встроенная (ноутбучная), BTH/BTHLE — Bluetooth,
+    /// USB/HID — проводная.
+    /// </summary>
+    private static KeyboardConnectionType ClassifyConnection(string devicePath)
+    {
+        string upper = devicePath.ToUpperInvariant();
+
+        if (upper.Contains(@"\?\ACPI") || upper.Contains("I8042") || upper.Contains("PNP0303"))
+        {
+            return KeyboardConnectionType.Laptop;
+        }
+
+        if (upper.Contains("BTHLE") || upper.Contains("BTH") || upper.Contains("BLUETOOTH"))
+        {
+            return KeyboardConnectionType.Bluetooth;
+        }
+
+        if (upper.Contains(@"\?\HID#") || upper.Contains(@"\?\USB"))
+        {
+            return KeyboardConnectionType.Wired;
+        }
+
+        return KeyboardConnectionType.Unknown;
+    }
+
+    /// <summary>
+    /// Читает имя продукта и производителя из реестра Windows
+    /// (раздел SYSTEM\CurrentControlSet\Enum).
+    /// </summary>
+    private static (string? ProductName, string? Manufacturer) ReadDeviceRegistryInfo(string devicePath)
+    {
+        try
+        {
+            // Путь Raw Input преобразуется в путь реестра: префикс отбрасывается,
+            // GUID-суффикс отсекается, решётки заменяются на обратные слэши.
+            string trimmed = devicePath.TrimStart('\\', '?');
+            int braceStart = trimmed.IndexOf('{', StringComparison.Ordinal);
+            if (braceStart >= 0)
+            {
+                trimmed = trimmed[..braceStart];
+            }
+
+            trimmed = trimmed.Replace('#', '\\');
+
+            using RegistryKey? key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Enum\" + trimmed);
+            if (key == null)
+            {
+                return (null, null);
+            }
+
+            string? productName = key.GetValue("FriendlyName") as string ?? key.GetValue("DeviceDesc") as string;
+            string? manufacturer = key.GetValue("Mfg") as string;
+
+            // DeviceDesc часто начинается с префикса локализации вида «@oem39.inf,%device%;Настоящее имя».
+            if (productName != null && productName.StartsWith('@'))
+            {
+                int semicolon = productName.IndexOf(';');
+                if (semicolon >= 0)
+                {
+                    productName = productName[(semicolon + 1)..];
+                }
+            }
+
+            return (string.IsNullOrWhiteSpace(productName) ? null : productName.Trim(),
+                    string.IsNullOrWhiteSpace(manufacturer) ? null : manufacturer.Trim());
+        }
+        catch (Exception)
+        {
+            return (null, null);
+        }
     }
 
     private static uint BuildScanCode(ushort makeCode, ushort flags)

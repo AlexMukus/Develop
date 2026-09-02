@@ -169,9 +169,9 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0x79, 0x44, "F10", "F10", 0, 11.0, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
         K(0x7A, 0x57, "F11", "F11", 0, 12.0, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
         K(0x7B, 0x58, "F12", "F12", 0, 13.0, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x2C, 0xE037, "PrtSc", "PrintScreen", 0, 14.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
-        K(0x91, 0x46, "ScrLk", "ScrollLock", 0, 15.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
-        K(0x13, 0xE145, "Pause", "Pause", 0, 16.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
+        K(0x2C, 0xE037, "PrtSc", "PrintScreen", 0, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
+        K(0x91, 0x46, "ScrLk", "ScrollLock", 0, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
+        K(0x13, 0xE145, "Pause", "Pause", 0, 17, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Iso105),
 
         // Ряд 1 — цифры + backspace + nav (ins/home/pgup) + numpad top
         K(0xC0, 0x29, "`", "Backquote", 1, 0, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
@@ -189,9 +189,9 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0xBB, 0x0D, "=", "Equal", 1, 12, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0x08, 0x0E, "Backspace", "Backspace", 1, 13, 2.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
 
-        K(0x2D, 0xE052, "Insert", "Insert", 1, 14.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x24, 0xE047, "Home", "Home", 1, 15.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x21, 0xE049, "PgUp", "PageUp", 1, 16.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x2D, 0xE052, "Insert", "Insert", 1, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x24, 0xE047, "Home", "Home", 1, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x21, 0xE049, "PgUp", "PageUp", 1, 17, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
 
         // Numpad верхний ряд
         K(0x90, 0x45, "Num", "NumLock", 1, 18, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
@@ -215,9 +215,9 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0xDD, 0x1B, "]", "BracketRight", 2, 12.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0xDC, 0x2B, "\\", "Backslash", 2, 13.5, 1.5, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
 
-        K(0x2E, 0xE053, "Delete", "Delete", 2, 14.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x23, 0xE04F, "End", "End", 2, 15.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x22, 0xE051, "PgDn", "PageDown", 2, 16.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x2E, 0xE053, "Delete", "Delete", 2, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x23, 0xE04F, "End", "End", 2, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x22, 0xE051, "PgDn", "PageDown", 2, 17, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
 
         K(0x67, 0x47, "7", "Num7", 2, 18, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
         K(0x68, 0x48, "8", "Num8", 2, 19, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
@@ -244,18 +244,18 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0x66, 0x4D, "6", "Num6", 3, 20, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
 
         // Ряд 4 — Shift + ZXCV + стрелки вверх
-        K(0xA0, 0x2A, "Shift", "LeftShift", 4, 0, 2.5, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
-        K(0x5A, 0x2C, "Z", "Z", 4, 2.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x58, 0x2D, "X", "X", 4, 3.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x43, 0x2E, "C", "C", 4, 4.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x56, 0x2F, "V", "V", 4, 5.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x42, 0x30, "B", "B", 4, 6.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x4E, 0x31, "N", "N", 4, 7.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0x4D, 0x32, "M", "M", 4, 8.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0xBC, 0x33, ",", "Comma", 4, 9.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0xBE, 0x34, ".", "Period", 4, 10.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0xBF, 0x35, "/", "Slash", 4, 11.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
-        K(0xA1, 0x36, "Shift", "RightShift", 4, 12.5, 2.75, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
+        K(0xA0, 0x2A, "Shift", "LeftShift", 4, 0, 2.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
+        K(0x5A, 0x2C, "Z", "Z", 4, 2.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x58, 0x2D, "X", "X", 4, 3.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x43, 0x2E, "C", "C", 4, 4.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x56, 0x2F, "V", "V", 4, 5.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x42, 0x30, "B", "B", 4, 6.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x4E, 0x31, "N", "N", 4, 7.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0x4D, 0x32, "M", "M", 4, 8.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0xBC, 0x33, ",", "Comma", 4, 9.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0xBE, 0x34, ".", "Period", 4, 10.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0xBF, 0x35, "/", "Slash", 4, 11.25, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
+        K(0xA1, 0x36, "Shift", "RightShift", 4, 12.25, 2.75, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
 
         K(0x26, 0xE048, "↑", "Up", 4, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
 
@@ -296,13 +296,13 @@ public sealed class LayoutProvider : ILayoutProvider
         .Concat(new[]
         {
             // Заменяем ANSI backslash на ISO-вариант (1u, ряд 2)
-            K(0xDC, 0x2B, "\\", "Backslash", 2, 13, 1.0, KeyboardLayout.Iso105),
+            K(0xDC, 0x2B, "\\", "Backslash", 2, 13.5, 1.0, KeyboardLayout.Iso105),
             // Доп. клавиша ряд 4 между левым Shift и Z
             K(0xDC, 0x56, "\\", "IsoBackslash", 4, 1.25, 1.0, KeyboardLayout.Iso105),
             // Левый Shift 1.25u
             K(0xA0, 0x2A, "Shift", "LeftShift", 4, 0, 1.25, KeyboardLayout.Iso105),
             // Правый Shift 2.75u
-            K(0xA1, 0x36, "Shift", "RightShift", 4, 13, 2.75, KeyboardLayout.Iso105),
+            K(0xA1, 0x36, "Shift", "RightShift", 4, 12.25, 2.75, KeyboardLayout.Iso105),
         })
         .ToList();
 

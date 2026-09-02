@@ -32,7 +32,19 @@ public partial class GhostingTestControl : UserControl
     {
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
+        Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        // Вкладка TabControl выгружает контрол при переключении; при возврате
+        // DataContext уже установлен, но событие DataContextChanged не возникает —
+        // присоединяемся повторно вручную.
+        if (_viewModel == null && DataContext is MainViewModel vm)
+        {
+            AttachViewModel(vm);
+        }
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

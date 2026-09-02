@@ -32,9 +32,12 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6">
             <Button Content="{x:Static res:Strings.SaveCurrentSession}" Padding="10,4" Margin="0,0,6,0"
+                    Foreground="{DynamicResource TextBrush}"
                     Command="{Binding SaveSessionCommand}"/>
-            <Button Content="{x:Static res:Strings.Delete}" Padding="10,4" Margin="0,0,6,0" Click="DeleteButton_Click"/>
+            <Button Content="{x:Static res:Strings.Delete}" Padding="10,4" Margin="0,0,6,0" Click="DeleteButton_Click"
+                    Foreground="{DynamicResource TextBrush}"/>
             <Button Content="{x:Static res:Strings.CompareLastTwo}" Padding="10,4"
+                    Foreground="{DynamicResource TextBrush}"
                     Command="{Binding CompareSessionsCommand}"/>
         </StackPanel>
 
@@ -45,11 +48,14 @@
                 CornerRadius="4"
                 Padding="8">
             <StackPanel>
-                <TextBlock Text="{x:Static res:Strings.ComparisonTitle}" FontWeight="Bold" Margin="0,0,0,4"/>
-                <TextBlock Text="{Binding LastComparison.PressCountDelta, StringFormat={x:Static res:Strings.ComparisonPressDelta}}"/>
+                <TextBlock Text="{x:Static res:Strings.ComparisonTitle}" FontWeight="Bold" Margin="0,0,0,4"
+                           Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{Binding LastComparison.PressCountDelta, StringFormat={x:Static res:Strings.ComparisonPressDelta}}"
+                           Foreground="{DynamicResource TextBrush}"/>
                 <TextBlock Text="{Binding LastComparison.ProblematicKeysDelta, StringFormat={x:Static res:Strings.ComparisonProblematicDelta}}"
-                           Margin="0,0,0,4"/>
-                <TextBlock Text="{x:Static res:Strings.ComparisonStatusChanges}" FontWeight="SemiBold"/>
+                            Margin="0,0,0,4" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{x:Static res:Strings.ComparisonStatusChanges}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextBrush}"/>
                 <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding LastComparison.KeyStatusChanges}">
                         <ItemsControl.ItemTemplate>

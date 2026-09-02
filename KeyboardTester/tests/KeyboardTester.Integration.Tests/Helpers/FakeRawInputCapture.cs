@@ -37,7 +37,17 @@ internal sealed class FakeRawInputCapture : IRawInputCapture
     /// <inheritdoc />
     public void SelectDevice(string devicePath)
     {
+        SelectedDevicePath = devicePath;
     }
+
+    /// <inheritdoc />
+    public void RefreshDevices() => RefreshDevicesCallCount++;
+
+    /// <summary>Путь последнего выбранного устройства (для проверок в тестах).</summary>
+    public string? SelectedDevicePath { get; private set; }
+
+    /// <summary>Количество вызовов <see cref="RefreshDevices"/>.</summary>
+    public int RefreshDevicesCallCount { get; private set; }
 
     /// <inheritdoc />
     public void Dispose()

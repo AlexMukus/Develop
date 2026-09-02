@@ -135,12 +135,97 @@ public class RawInputCaptureTests
         });
     }
 
+    [Fact]
+    public void RefreshDevices_WithoutStartCapture_DoesNotThrow()
+    {
+        RunOnSta(capture =>
+        {
+            var act = () => capture.RefreshDevices();
+
+            act.Should().NotThrow();
+            capture.IsCapturing.Should().BeFalse();
+        });
+    }
+
+    [Fact]
+    public void RefreshDevices_DetectsConnectedAndDisconnectedKeyboards()
+    {
+        IntPtr first = new(1001);
+        IntPtr second = new(1002);
+        AddKeyboard(first, @"\\?\HID#VID_045E&PID_07B9#keyboard1");
+
+        RunOnSta(capture =>
+        {
+            var connected = new List<KeyboardTester.Core.Models.InputDevice>();
+            var disconnected = new List<KeyboardTester.Core.Models.InputDevice>();
+            capture.DeviceConnected += (_, device) => { lock (connected) { connected.Add(device); } };
+            capture.DeviceDisconnected += (_, device) => { lock (disconnected) { disconnected.Add(device); } };
+
+            // Таймер конструктора выполняет первичный опрос асинхронно и, возможно,
+            // до нашей подписки — ждём состояния списка устройств, а не события.
+            WaitFor(() => capture.ConnectedKeyboards.Count == 1, "первичный опрос устройств");
+            lock (connected)
+            {
+                connected.Clear();
+            }
+
+            // Симулируем замену клавиатуры: первая отключена, вторая подключена.
+            _native.Devices.RemoveAll(d => d.hDevice == first);
+            _native.Devices.Add(new RAWINPUTDEVICELIST { hDevice = second, dwType = RimTypeKeyboard });
+            Func<IntPtr, string?> previous = _native.DevicePathResolver;
+            _native.DevicePathResolver = h => h == second
+                ? @"\\?\HID#VID_046D&PID_C31C#keyboard2"
+                : previous(h);
+
+            capture.RefreshDevices();
+
+            capture.ConnectedKeyboards.Should().ContainSingle(d => d.DevicePath.EndsWith("keyboard2", StringComparison.Ordinal));
+            lock (connected)
+            {
+                connected.Should().ContainSingle(d => d.DevicePath.EndsWith("keyboard2", StringComparison.Ordinal));
+            }
+
+            lock (disconnected)
+            {
+                disconnected.Should().ContainSingle(d => d.DevicePath.EndsWith("keyboard1", StringComparison.Ordinal));
+            }
+
+            // Повторный рефреш без изменений не порождает новых событий.
+            capture.RefreshDevices();
+            lock (connected)
+            {
+                connected.Should().HaveCount(1);
+            }
+
+            lock (disconnected)
+            {
+                disconnected.Should().HaveCount(1);
+            }
+        });
+    }
+
     private void AddKeyboard(IntPtr handle, string path)
     {
         _native.Devices.Add(new RAWINPUTDEVICELIST { hDevice = handle, dwType = RimTypeKeyboard });
 
         Func<IntPtr, string?> previous = _native.DevicePathResolver;
         _native.DevicePathResolver = h => h == handle ? path : previous(h);
+    }
+
+    private static void WaitFor(Func<bool> condition, string description)
+    {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            Thread.Sleep(20);
+        }
+
+        throw new TimeoutException($"Таймаут ожидания: {description}.");
     }
 
     private void RunOnSta(Action<RawInputCapture> test)

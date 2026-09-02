@@ -42,18 +42,25 @@
             </ComboBox>
             <Separator/>
             <Button Content="{x:Static res:Strings.StartTest}" Command="{Binding StartTestCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"
                     IsEnabled="{Binding IsSessionRunning, Converter={StaticResource InverseBoolConverter}}"/>
             <Button Content="{x:Static res:Strings.StopTest}" Command="{Binding StopTestCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"
                     IsEnabled="{Binding IsSessionRunning}"/>
-            <Button Content="{x:Static res:Strings.ResetTest}" Command="{Binding ResetCommand}" Margin="2,0"/>
+            <Button Content="{x:Static res:Strings.ResetTest}" Command="{Binding ResetCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"/>
             <Separator/>
             <Button Content="{x:Static res:Strings.GhostingTest}" Command="{Binding StartGhostingTestCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"
                     IsEnabled="{Binding IsGhostingTestActive, Converter={StaticResource InverseBoolConverter}}"/>
             <Button Content="{x:Static res:Strings.GhostingTestStop}" Command="{Binding StopGhostingTestCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"
                     IsEnabled="{Binding IsGhostingTestActive}"/>
             <Separator/>
-            <Button Content="{x:Static res:Strings.Settings}" Command="{Binding OpenSettingsCommand}" Margin="2,0"/>
-            <Button Content="{x:Static res:Strings.About}" Command="{Binding OpenAboutCommand}" Margin="2,0"/>
+            <Button Content="{x:Static res:Strings.Settings}" Command="{Binding OpenSettingsCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"/>
+            <Button Content="{x:Static res:Strings.About}" Command="{Binding OpenAboutCommand}" Margin="2,0"
+                    Foreground="{DynamicResource TextBrush}"/>
         </ToolBar>
 
         <!-- Content -->
