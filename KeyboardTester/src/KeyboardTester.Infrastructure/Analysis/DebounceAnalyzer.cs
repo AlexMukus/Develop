@@ -130,6 +130,15 @@ public sealed class DebounceAnalyzer : IDebounceAnalyzer
     {
         long frequency = Stopwatch.Frequency;
         long timestamp = Stopwatch.GetTimestamp();
-        return (timestamp * 1_000_000) / frequency;
+        return TimestampToMicroseconds(timestamp, frequency);
+    }
+
+    /// <summary>
+    /// Преобразует QPC-отсчёт в микросекунды без риска переполнения long
+    /// (прямое умножение на 1_000_000 переполняется при аптайме больше ~10 дней).
+    /// </summary>
+    internal static long TimestampToMicroseconds(long timestamp, long frequency)
+    {
+        return (timestamp / frequency) * 1_000_000L + (timestamp % frequency) * 1_000_000L / frequency;
     }
 }

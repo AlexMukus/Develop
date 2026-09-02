@@ -389,7 +389,8 @@ public sealed class RawInputCapture : IRawInputCapture
             return DateTime.UtcNow.Ticks / 10;
         }
 
-        return (count * 1_000_000) / _qpcFrequency;
+        // Умножение до деления переполняет long при большом аптайме — используем безопасную формулу.
+        return (count / _qpcFrequency) * 1_000_000L + (count % _qpcFrequency) * 1_000_000L / _qpcFrequency;
     }
 
     private static string GetKeyName(uint scanCode, ushort virtualKeyCode)

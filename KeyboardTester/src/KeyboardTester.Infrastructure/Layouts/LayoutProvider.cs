@@ -257,7 +257,7 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0xBF, 0x35, "/", "Slash", 4, 11.5, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0xA1, 0x36, "Shift", "RightShift", 4, 12.5, 2.75, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60),
 
-        K(0x26, 0xE048, "↑", "Up", 4, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x26, 0xE048, "↑", "Up", 4, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
 
         K(0x61, 0x4F, "1", "Num1", 4, 18, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
         K(0x62, 0x50, "2", "Num2", 4, 19, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
@@ -274,9 +274,9 @@ public sealed class LayoutProvider : ILayoutProvider
         K(0x5D, 0xE05D, "Menu", "Apps", 5, 12.5, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
         K(0xA3, 0xE01D, "Ctrl", "RightCtrl", 5, 13.75, 1.25, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Layout60, KeyboardLayout.Iso105),
 
-        K(0x25, 0xE04B, "←", "Left", 5, 14, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x28, 0xE050, "↓", "Down", 5, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
-        K(0x27, 0xE04D, "→", "Right", 5, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x25, 0xE04B, "←", "Left", 5, 15, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x28, 0xE050, "↓", "Down", 5, 16, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
+        K(0x27, 0xE04D, "→", "Right", 5, 17, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Tkl, KeyboardLayout.Layout75, KeyboardLayout.Iso105),
 
         K(0x60, 0x52, "0", "Num0", 5, 18, 2.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),
         K(0x6E, 0x53, ".", "NumDecimal", 5, 20, 1.0, KeyboardLayout.Ansi104, KeyboardLayout.Numpad),

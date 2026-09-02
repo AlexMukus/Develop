@@ -194,9 +194,14 @@ public class DebounceAnalyzerTests
 
     /// <summary>
     /// Текущее время в микросекундах QPC — тот же базис, что использует анализатор.
+    /// Формула без переполнения (как в <see cref="DebounceAnalyzer"/>).
     /// </summary>
-    private static long NowMicroseconds() =>
-        Stopwatch.GetTimestamp() * 1_000_000 / Stopwatch.Frequency;
+    private static long NowMicroseconds()
+    {
+        long frequency = Stopwatch.Frequency;
+        long timestamp = Stopwatch.GetTimestamp();
+        return (timestamp / frequency) * 1_000_000L + (timestamp % frequency) * 1_000_000L / frequency;
+    }
 
     private static KeyStatistics CreateStatistics(params ChatterEvent[] chatterEvents)
     {

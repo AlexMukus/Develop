@@ -20,7 +20,7 @@ public class StatisticsEngineTests
     private readonly Mock<IDebounceAnalyzer> _mockAnalyzer = new();
 
     private StatisticsEngine CreateEngine(DebounceSettings? settings = null) =>
-        new(_mockAnalyzer.Object, settings ?? new DebounceSettings(), new LayoutProvider());
+        new(_mockAnalyzer.Object, settings ?? new DebounceSettings(), new LayoutProvider(), new InlineSyncContext());
 
     [Fact]
     public void RecordKeyDown_IncrementsPressCount()
@@ -65,7 +65,8 @@ public class StatisticsEngineTests
     public void RecordKeyDown_WithRealAnalyzer_RecordsChatterEvent()
     {
         // Сквозной сценарий: интервал 10 мс → критический дребезг → статус Critical.
-        var engine = new StatisticsEngine(new DebounceAnalyzer(), new DebounceSettings(), new LayoutProvider());
+        var engine = new StatisticsEngine(
+            new DebounceAnalyzer(), new DebounceSettings(), new LayoutProvider(), new InlineSyncContext());
 
         engine.RecordKeyDown(Down(ScanA, 0));
         engine.RecordKeyUp(Up(ScanA, 8_000));
@@ -233,4 +234,16 @@ public class StatisticsEngineTests
 
     private static KeyEvent Up(uint scanCode, long timestampMicroseconds) =>
         new(Guid.NewGuid(), 0, scanCode, "K", timestampMicroseconds, false, null);
+
+    /// <summary>
+    /// Контекст с синхронным Post — гарантирует, что события движка приходят
+    /// в потоке теста независимо от окружения исполнителя.
+    /// </summary>
+    private sealed class InlineSyncContext : SynchronizationContext
+    {
+        public override void Post(SendOrPostCallback callback, object? state)
+        {
+            callback(state);
+        }
+    }
 }

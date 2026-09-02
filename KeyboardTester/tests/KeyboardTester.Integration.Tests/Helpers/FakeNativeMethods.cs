@@ -14,7 +14,7 @@ internal sealed class FakeNativeMethods : KeyboardTester.Infrastructure.Input.IN
     public List<KeyboardTester.Infrastructure.Input.RAWINPUTDEVICE[]> RegisterCalls { get; } = new();
 
     /// <summary>Результат RegisterRawInputDevices (по умолчанию успех).</summary>
-    public bool RegisterResult { get; set; } = 1 == 1;
+    public bool RegisterResult { get; set; } = true;
 
     /// <summary>Список устройств, возвращаемый GetRawInputDeviceList.</summary>
     public List<KeyboardTester.Infrastructure.Input.RAWINPUTDEVICELIST> Devices { get; } = new();

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Description>Модульные тесты для KeyboardTester.Core.</Description>

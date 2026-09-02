@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Description>Интеграционные тесты KeyboardTester (Raw Input, хранение, экспорт).</Description>
