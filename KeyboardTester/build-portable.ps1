@@ -1,4 +1,4 @@
-﻿# Сборка portable-версии KeyboardTester (self-contained, single-file EXE).
+# Сборка portable-версии KeyboardTester (self-contained, single-file EXE).
 # Использование:
 #   .\build-portable.ps1                          — Release, версия из git describe
 #   .\build-portable.ps1 -Configuration Debug     — другая конфигурация
@@ -25,11 +25,20 @@ Set-StrictMode -Version Latest
 # --- Версия артефакта -------------------------------------------------------
 # git describe пишет ошибки в stderr; при $ErrorActionPreference='Stop'
 # редирект 2>$null может бросить NativeCommandError в Windows PowerShell 5.1,
-# поэтому оборачиваем в try/catch.
+# поэтому оборачиваем в try/catch. При отсутствии git вообще не обращаемся
+# к $LASTEXITCODE (StrictMode считает несуществующую переменную ошибкой).
 if (-not $Version) {
-    $gitTag = $null
-    try { $gitTag = (git describe --tags --always 2>$null | Select-Object -First 1) } catch { $gitTag = $null }
-    $Version = if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace([string]$gitTag)) { ([string]$gitTag).Trim() } else { 'dev' }
+    $Version = 'dev'
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        try {
+            $gitTag = (git describe --tags --always 2>$null | Select-Object -First 1)
+            if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace([string]$gitTag)) {
+                $Version = ([string]$gitTag).Trim()
+            }
+        } catch {
+            # git есть, но describe не сработал (нет коммитов/тегов) — остаётся 'dev'.
+        }
+    }
 }
 
 $projectPath = 'src/KeyboardTester.UI/KeyboardTester.UI.csproj'
