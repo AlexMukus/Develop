@@ -289,4 +289,31 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- ===== Стили для контролов внутри ToolBar =====
+         WPF подменяет стили прямых дочерних элементов ToolBar на системные
+         по ключам ToolBar.*StyleKey (PrepareContainerForItemOverride задаёт их,
+         если у элемента нет явного Style). Из-за этого ComboBox раскладки и
+         клавиатур в тулбаре главного окна оставались со светлым системным фоном
+         при смене темы. Пробрасываем ключи на общие тематические стили.
+         ВАЖНО: блок должен идти ПОСЛЕ неявных стилей — BasedOn через
+         StaticResource не разрешает ссылки вперёд. -->
+    <Style x:Key="{x:Static ToolBar.ComboBoxStyleKey}" TargetType="ComboBox"
+           BasedOn="{StaticResource {x:Type ComboBox}}"/>
+    <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button"
+           BasedOn="{StaticResource {x:Type Button}}"/>
+    <Style x:Key="{x:Static ToolBar.TextBoxStyleKey}" TargetType="TextBox"
+           BasedOn="{StaticResource {x:Type TextBox}}"/>
+    <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}" TargetType="Separator">
+        <Setter Property="Background" Value="{DynamicResource PanelBorderBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Background="{TemplateBinding Background}"
+                            Width="1" Margin="4,3"
+                            SnapsToDevicePixels="True"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
