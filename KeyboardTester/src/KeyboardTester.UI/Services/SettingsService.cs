@@ -49,6 +49,9 @@ public sealed class SettingsService
         Current = Load();
     }
 
+    /// <summary>Событие изменения настроек (после успешного сохранения).</summary>
+    public event EventHandler? SettingsChanged;
+
     /// <summary>Путь к файлу настроек.</summary>
     public string FilePath => _filePath;
 
@@ -72,6 +75,8 @@ public sealed class SettingsService
         {
             // Ошибка записи настроек не должна ронять приложение.
         }
+
+        SettingsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private AppSettings Load()

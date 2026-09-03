@@ -24,7 +24,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly ISessionHistoryService _sessionHistoryService;
     private readonly ILayoutProvider _layoutProvider;
     private readonly IThemeService _themeService;
-    private readonly ILocalizationService _localizationService;
     private readonly TestSessionService _testSessionService;
     private readonly ILogger<MainViewModel> _logger;
     private readonly SynchronizationContext? _syncContext;
@@ -43,7 +42,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
         ISessionHistoryService sessionHistoryService,
         ILayoutProvider layoutProvider,
         IThemeService themeService,
-        ILocalizationService localizationService,
         TestSessionService testSessionService,
         ILogger<MainViewModel> logger,
         SynchronizationContext? syncContext = null)
@@ -54,7 +52,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _sessionHistoryService = sessionHistoryService ?? throw new ArgumentNullException(nameof(sessionHistoryService));
         _layoutProvider = layoutProvider ?? throw new ArgumentNullException(nameof(layoutProvider));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
-        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _testSessionService = testSessionService ?? throw new ArgumentNullException(nameof(testSessionService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _syncContext = syncContext ?? SynchronizationContext.Current;

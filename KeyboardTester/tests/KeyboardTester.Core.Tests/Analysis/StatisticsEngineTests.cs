@@ -174,6 +174,58 @@ public class StatisticsEngineTests
     }
 
     [Fact]
+    public void UpdateSettings_NewThresholds_AppliedToSubsequentEvents()
+    {
+        // Исходно интервал 30 мс — Moderate (порог Critical = 20). После смены
+        // порога CriticalThresholdMs = 30 интервал 15 мс должен классифицироваться
+        // как Critical без пересоздания движка.
+        var engine = new StatisticsEngine(
+            new DebounceAnalyzer(), new DebounceSettings(), new LayoutProvider(), new InlineSyncContext());
+
+        engine.RecordKeyDown(Down(ScanA, 0));
+        engine.RecordKeyUp(Up(ScanA, 10_000));
+        engine.RecordKeyDown(Down(ScanA, 30_000));
+        KeyStatistics before = engine.GetStatistics(GetKey(engine, ScanA))!;
+        before.ChatterEvents.Should().ContainSingle()
+            .Which.Severity.Should().Be(ChatterSeverity.Moderate);
+
+        engine.UpdateSettings(new DebounceSettings(CriticalThresholdMs: 30, WarningThresholdMs: 60, MildThresholdMs: 90));
+        engine.RecordKeyUp(Up(ScanA, 35_000));
+        engine.RecordKeyDown(Down(ScanA, 45_000));
+
+        KeyStatistics after = engine.GetStatistics(GetKey(engine, ScanA))!;
+        after.ChatterEvents.Last().Severity.Should().Be(ChatterSeverity.Critical);
+    }
+
+    [Fact]
+    public void UpdateSettings_ShrinksExistingBuffers_ToNewMaxEvents()
+    {
+        // Лимит 10 событий накоплен, новый лимит — 3: буферы подрезаются сразу.
+        StatisticsEngine engine = CreateEngine(new DebounceSettings(MaxEventsPerKey: 10));
+        long timestamp = 0;
+        for (int i = 1; i <= 11; i++)
+        {
+            timestamp += 10_000;
+            engine.RecordKeyDown(Down(ScanA, timestamp));
+        }
+
+        engine.UpdateSettings(new DebounceSettings(MaxEventsPerKey: 3));
+
+        KeyStatistics statistics = engine.GetStatistics(GetKey(engine, ScanA))!;
+        statistics.PressIntervalsMs.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void UpdateSettings_NullSettings_ThrowsArgumentNullException()
+    {
+        StatisticsEngine engine = CreateEngine();
+
+        var act = () => engine.UpdateSettings(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public void GetStatistics_NonExistentKey_ReturnsNull()
     {
         StatisticsEngine engine = CreateEngine();

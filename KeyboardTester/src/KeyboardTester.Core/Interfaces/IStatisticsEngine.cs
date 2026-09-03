@@ -38,4 +38,12 @@ public interface IStatisticsEngine
     /// </summary>
     /// <param name="key">Клавиша.</param>
     void ResetKey(PhysicalKey key);
+
+    /// <summary>
+    /// Заменить пороговые настройки диагностики. Применяется к последующим
+    /// событиям; накопленные буферы подрезаются под новый лимит
+    /// <see cref="DebounceSettings.MaxEventsPerKey"/>.
+    /// </summary>
+    /// <param name="settings">Новые настройки.</param>
+    void UpdateSettings(DebounceSettings settings);
 }

@@ -86,6 +86,12 @@ public partial class App : System.Windows.Application
         var themeManager = _serviceProvider.GetRequiredService<ThemeManager>();
         themeManager.SetTheme(settingsService.Current.Theme);
 
+        // Пороги диагностики применяются к движку сразу после сохранения настроек,
+        // без перезапуска приложения.
+        var statisticsEngine = _serviceProvider.GetRequiredService<IStatisticsEngine>();
+        settingsService.SettingsChanged += (_, _) =>
+            statisticsEngine.UpdateSettings(settingsService.Current.Debounce);
+
         var mainWindow = new MainWindow(viewModel, settingsService, themeManager);
         MainWindow = mainWindow;
         mainWindow.Show();

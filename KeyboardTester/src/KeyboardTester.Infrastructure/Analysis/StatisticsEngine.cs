@@ -16,7 +16,9 @@ public sealed class StatisticsEngine : IStatisticsEngine
     private readonly ConcurrentDictionary<PhysicalKey, KeyEvent> _pendingKeyDowns = new();
     private readonly ConcurrentDictionary<PhysicalKey, long> _lastKeyDownTimestamps = new();
     private readonly IDebounceAnalyzer _debounceAnalyzer;
-    private readonly DebounceSettings _settings;
+
+    /// <summary>Текущие пороги диагностики; заменяются через <see cref="UpdateSettings"/>.</summary>
+    private DebounceSettings _settings;
     private readonly ILayoutProvider _layoutProvider;
     private readonly SynchronizationContext? _syncContext;
 
@@ -160,6 +162,26 @@ public sealed class StatisticsEngine : IStatisticsEngine
         _statistics.TryRemove(key, out _);
         _pendingKeyDowns.TryRemove(key, out _);
         _lastKeyDownTimestamps.TryRemove(key, out _);
+    }
+
+    /// <inheritdoc />
+    public void UpdateSettings(DebounceSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        _settings = settings;
+
+        // Буферы уже накопленных событий подрезаются под новый лимит,
+        // чтобы окно наблюдения соответствовало актуальным настройкам.
+        foreach (KeyStatistics stats in _statistics.Values)
+        {
+            lock (stats)
+            {
+                TrimBuffer(stats.PressIntervalsMs);
+                TrimBuffer(stats.HoldDurationsMs);
+                TrimBuffer(stats.ChatterEvents);
+            }
+        }
     }
 
     private PhysicalKey? ResolveKey(uint scanCode)
