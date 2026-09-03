@@ -253,6 +253,30 @@ namespace KeyboardTester.UI.Resources
 
         public static string LayoutNumpadName => ResourceManager.GetString("LayoutNumpadName", resourceCulture);
 
+        public static string AutoDetectLayout => ResourceManager.GetString("AutoDetectLayout", resourceCulture);
+
+        public static string DetectionHintTitle => ResourceManager.GetString("DetectionHintTitle", resourceCulture);
+
+        public static string DetectionHintText => ResourceManager.GetString("DetectionHintText", resourceCulture);
+
+        public static string DetectionNoNumpad => ResourceManager.GetString("DetectionNoNumpad", resourceCulture);
+
+        public static string DetectionCancel => ResourceManager.GetString("DetectionCancel", resourceCulture);
+
+        public static string DetectionNumpadEnterDone => ResourceManager.GetString("DetectionNumpadEnterDone", resourceCulture);
+
+        public static string DetectionLeftShiftDone => ResourceManager.GetString("DetectionLeftShiftDone", resourceCulture);
+
+        public static string LayoutProposalTitle => ResourceManager.GetString("LayoutProposalTitle", resourceCulture);
+
+        public static string LayoutProposalSuggested => ResourceManager.GetString("LayoutProposalSuggested", resourceCulture);
+
+        public static string LayoutProposalAmbiguous => ResourceManager.GetString("LayoutProposalAmbiguous", resourceCulture);
+
+        public static string LayoutProposalRemember => ResourceManager.GetString("LayoutProposalRemember", resourceCulture);
+
+        public static string KeyboardRecognized => ResourceManager.GetString("KeyboardRecognized", resourceCulture);
+
         public static string SessionDetailsTitle => ResourceManager.GetString("SessionDetailsTitle", resourceCulture);
 
         public static string SessionStartLabel => ResourceManager.GetString("SessionStartLabel", resourceCulture);

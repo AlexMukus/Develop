@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddSingleton<TestSessionService>();
+        services.AddSingleton<KeyboardDetectionService>();
         services.AddSingleton<MainViewModel>();
 
         return services;

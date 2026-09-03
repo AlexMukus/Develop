@@ -688,6 +688,24 @@ JSON
     ]
 }
 
+## Этап 8 (v1.2.0): Автоматическое определение типа клавиатуры — ВЫПОЛНЕН
+
+Требования и решения зафиксированы в `plans/v1.2.0-keyboard-autodetection.md`.
+
+### Реализовано
+
+1. **Каталог VID/PID** — `Infrastructure/Layouts/KeyboardCatalog.cs`: 52 записи топ-моделей (Logitech, Razer, Corsair, SteelSeries, Cherry, Keychron, Ducky, Varmilo, Glorious, Royal Kludge, Roccat); попадание → раскладка применяется и привязка сохраняется молча, имя модели — в статус-баре.
+2. **Маркерная эвристика** — `Infrastructure/Layouts/LayoutHeuristics.cs` по матрице (NumpadEnter `0xE01C` + сосед Shift `0x56`/`0x2C`): ISO 105 / ANSI 104 / null (ручной выбор).
+3. **Визард** — `Application/Services/KeyboardDetectionService.cs` (конечный автомат Idle → WaitingNumpadEnter → WaitingLeftShift → Proposal, фильтр нажатий по `DevicePath` цели).
+4. **Персистентность** — `IDeviceLayoutStore` поверх `SettingsService`: ключ `VID_XXXX&PID_YYYY`, fallback `DevicePath` для ноутбучных; merge-защита в `Save(debounce, theme)` (диалог настроек не стирает привязки).
+5. **UI** — баннер визарда между тулбаром и контентом (индикаторы маркеров, «Нет цифрового блока», «Отмена»), диалог `LayoutProposalDialog` (предложение + ручной выбор + «Запомнить»), кнопка «Определить автоматически» в тулбаре, 13 новых ключей локализации.
+6. **MainViewModel** — автоприменение (стор → каталог → визард) при подключении/выборе устройства, ручная смена раскладки обновляет привязку, захват ввода продолжает работать во время визарда.
+
+### Статус
+
+- Сборка без предупреждений, 156 тестов зелёные (92 Core + 64 Integration, +60 к v1.1.x).
+- Версия 1.2.0 в `Directory.Build.props`.
+
 ## Критерии приёмки
 1. `dotnet build KeyboardTester.sln` и `dotnet test` зелёные в CI (windows-latest, .NET 9).
 2. Приложение запускается, захватывает нажатия реальной клавиатуры (Raw Input), показывает их на виртуальной клавиатуре с анимацией.

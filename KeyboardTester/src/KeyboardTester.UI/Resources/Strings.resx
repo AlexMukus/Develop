@@ -378,6 +378,56 @@
     <comment>Отображаемое имя раскладки «только цифровой блок».</comment>
   </data>
 
+  <!-- ===== Автоопределение раскладки (v1.2.0) ===== -->
+  <data name="AutoDetectLayout" xml:space="preserve">
+    <value>🔍 Определить автоматически</value>
+    <comment>Кнопка запуска визарда автоопределения раскладки в тулбаре.</comment>
+  </data>
+  <data name="DetectionHintTitle" xml:space="preserve">
+    <value>Определение раскладки клавиатуры</value>
+    <comment>Заголовок баннера визарда автоопределения.</comment>
+  </data>
+  <data name="DetectionHintText" xml:space="preserve">
+    <value>Нажмите Enter на цифровом блоке (если есть) и клавишу слева от левого Shift.</value>
+    <comment>Подсказка баннера: какие клавиши нажимать для сбора маркеров.</comment>
+  </data>
+  <data name="DetectionNoNumpad" xml:space="preserve">
+    <value>Нет цифрового блока</value>
+    <comment>Кнопка пропуска маркера NumpadEnter в баннере.</comment>
+  </data>
+  <data name="DetectionCancel" xml:space="preserve">
+    <value>Отмена</value>
+    <comment>Кнопка отмены визарда автоопределения.</comment>
+  </data>
+  <data name="DetectionNumpadEnterDone" xml:space="preserve">
+    <value>Enter numpad</value>
+    <comment>Индикатор маркера Enter цифрового блока в баннере.</comment>
+  </data>
+  <data name="DetectionLeftShiftDone" xml:space="preserve">
+    <value>Клавиша у Shift</value>
+    <comment>Индикатор маркера клавиши слева от Shift в баннере.</comment>
+  </data>
+  <data name="LayoutProposalTitle" xml:space="preserve">
+    <value>Определение раскладки</value>
+    <comment>Заголовок диалога предложения раскладки.</comment>
+  </data>
+  <data name="LayoutProposalSuggested" xml:space="preserve">
+    <value>Предлагаемая раскладка: {0}</value>
+    <comment>{0} — имя раскладки. Показывается при уверенной эвристике.</comment>
+  </data>
+  <data name="LayoutProposalAmbiguous" xml:space="preserve">
+    <value>Не удалось определить автоматически — выберите раскладку вручную.</value>
+    <comment>Текст диалога при неоднозначной эвристике.</comment>
+  </data>
+  <data name="LayoutProposalRemember" xml:space="preserve">
+    <value>Запомнить для этой клавиатуры</value>
+    <comment>Чекбокс сохранения привязки в диалоге предложения.</comment>
+  </data>
+  <data name="KeyboardRecognized" xml:space="preserve">
+    <value>Клавиатура распознана: {0}</value>
+    <comment>{0} — имя модели из каталога. Показывается при попадании в каталог.</comment>
+  </data>
+
   <!-- ===== Просмотр истории: панель деталей сессии (v1.1.0) ===== -->
   <data name="SessionDetailsTitle" xml:space="preserve">
     <value>Детали сессии</value>

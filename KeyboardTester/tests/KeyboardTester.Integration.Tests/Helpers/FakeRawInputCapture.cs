@@ -58,6 +58,20 @@ internal sealed class FakeRawInputCapture : IRawInputCapture
     public void Press(uint scanCode, long timestampMicroseconds) =>
         KeyPressed?.Invoke(this, CreateArgs(scanCode, timestampMicroseconds));
 
+    /// <summary>
+    /// Симулирует нажатие клавиши от конкретного устройства (v1.2.0:
+    /// визард детекции фильтрует нажатия по DevicePath).
+    /// </summary>
+    public void Press(uint scanCode, long timestampMicroseconds, string devicePath) =>
+        KeyPressed?.Invoke(this, new RawKeyEventArgs
+        {
+            VirtualKeyCode = 0,
+            ScanCode = scanCode,
+            KeyName = $"SC{scanCode:X}",
+            TimestampMicroseconds = timestampMicroseconds,
+            DevicePath = devicePath,
+        });
+
     /// <summary>Симулирует отпускание клавиши с указанным скан-кодом.</summary>
     public void Release(uint scanCode, long timestampMicroseconds) =>
         KeyReleased?.Invoke(this, CreateArgs(scanCode, timestampMicroseconds));

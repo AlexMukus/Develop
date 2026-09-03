@@ -68,6 +68,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IGhostingTestEngine, GhostingTestEngine>();
         services.AddSingleton<ISessionHistoryService>(sp => new SessionHistoryService(
             logger: sp.GetRequiredService<ILogger<SessionHistoryService>>()));
+        services.AddSingleton<IKeyboardCatalog, KeyboardCatalog>();
+        services.AddSingleton<ILayoutHeuristics, LayoutHeuristics>();
+        services.AddSingleton<IDeviceLayoutStore>(sp => sp.GetRequiredService<SettingsService>());
 
         // Presentation-сервисы.
         services.AddSingleton<ThemeManager>();

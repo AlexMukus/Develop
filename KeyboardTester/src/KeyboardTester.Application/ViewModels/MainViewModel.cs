@@ -25,8 +25,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly ILayoutProvider _layoutProvider;
     private readonly IThemeService _themeService;
     private readonly TestSessionService _testSessionService;
+    private readonly KeyboardDetectionService _detectionService;
+    private readonly IKeyboardCatalog _keyboardCatalog;
+    private readonly IDeviceLayoutStore _deviceLayoutStore;
     private readonly ILogger<MainViewModel> _logger;
     private readonly SynchronizationContext? _syncContext;
+
+    /// <summary>
+    /// Флаг программного применения раскладки (из стор/каталога/диалога):
+    /// отличает его от ручной смены пользователем в комбобоксе.
+    /// </summary>
+    private bool _isApplyingLayout;
 
     private readonly Dictionary<PhysicalKey, int> _intervalCounts = new();
     private readonly Dictionary<PhysicalKey, int> _durationCounts = new();
@@ -43,6 +52,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         ILayoutProvider layoutProvider,
         IThemeService themeService,
         TestSessionService testSessionService,
+        KeyboardDetectionService detectionService,
+        IKeyboardCatalog keyboardCatalog,
+        IDeviceLayoutStore deviceLayoutStore,
         ILogger<MainViewModel> logger,
         SynchronizationContext? syncContext = null)
     {
@@ -53,6 +65,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _layoutProvider = layoutProvider ?? throw new ArgumentNullException(nameof(layoutProvider));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _testSessionService = testSessionService ?? throw new ArgumentNullException(nameof(testSessionService));
+        _detectionService = detectionService ?? throw new ArgumentNullException(nameof(detectionService));
+        _keyboardCatalog = keyboardCatalog ?? throw new ArgumentNullException(nameof(keyboardCatalog));
+        _deviceLayoutStore = deviceLayoutStore ?? throw new ArgumentNullException(nameof(deviceLayoutStore));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _syncContext = syncContext ?? SynchronizationContext.Current;
 
@@ -78,6 +93,66 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     private bool _isSessionRunning;
+
+    /// <summary>
+    /// Идёт ли визард автоматического определения раскладки (v1.2.0).
+    /// </summary>
+    [ObservableProperty]
+    private bool _isDetectionWizardActive;
+
+    /// <summary>
+    /// Визард ждёт нажатия Enter цифрового блока.
+    /// </summary>
+    [ObservableProperty]
+    private bool _detectionWaitingNumpadEnter;
+
+    /// <summary>
+    /// Визард ждёт нажатия клавиши слева от левого Shift.
+    /// </summary>
+    [ObservableProperty]
+    private bool _detectionWaitingLeftShift;
+
+    /// <summary>
+    /// Обнаружен ли Enter цифрового блока (индикатор баннера).
+    /// </summary>
+    [ObservableProperty]
+    private bool _numpadEnterDetected;
+
+    /// <summary>
+    /// Обнаружена ли клавиша слева от левого Shift (индикатор баннера).
+    /// </summary>
+    [ObservableProperty]
+    private bool _leftShiftKeyDetected;
+
+    /// <summary>
+    /// Требуется показать диалог предложения раскладки.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isProposalRequired;
+
+    /// <summary>
+    /// Раскладка, предложенная эвристикой (null — неоднозначно, ручной выбор).
+    /// </summary>
+    [ObservableProperty]
+    private KeyboardLayout? _suggestedLayout;
+
+    /// <summary>
+    /// Раскладка, выбранная в диалоге предложения.
+    /// </summary>
+    [ObservableProperty]
+    private KeyboardLayout _proposedLayout;
+
+    /// <summary>
+    /// Флаг «Запомнить для этой клавиатуры» в диалоге предложения.
+    /// </summary>
+    [ObservableProperty]
+    private bool _rememberDeviceLayout = true;
+
+    /// <summary>
+    /// Имя распознанной клавиатуры из каталога (статус; null — не распознана).
+    /// </summary>
+    [ObservableProperty]
+    private string? _detectedKeyboardName;
 
     /// <summary>
     /// Выбранная раскладка клавиатуры.
@@ -192,6 +267,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     private bool _isNKeyRollover;
+
+    /// <summary>
+    /// Идёт ли визард автоопределения (видимость баннера детекции).
+    /// </summary>
+    public bool IsDetectionActive => IsDetectionWizardActive;
 
     /// <summary>
     /// Поддерживаемые раскладки клавиатур.
@@ -341,6 +421,74 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OpenAboutRequested?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Запустить визард автоопределения вручную для выбранной клавиатуры.
+    /// </summary>
+    [RelayCommand]
+    private void RunDetection()
+    {
+        if (SelectedKeyboard == null)
+        {
+            return;
+        }
+
+        _detectionService.Start(SelectedKeyboard);
+        EnsureCaptureStarted();
+    }
+
+    /// <summary>
+    /// «Нет цифрового блока» — пропустить маркер NumpadEnter.
+    /// </summary>
+    [RelayCommand]
+    private void SkipNumpad()
+    {
+        _detectionService.MarkNumpadAbsent();
+    }
+
+    /// <summary>
+    /// Отменить визард автоопределения (закрыть баннер).
+    /// </summary>
+    [RelayCommand]
+    private void CancelDetection()
+    {
+        _detectionService.Cancel();
+        MaybeStopCapture();
+    }
+
+    /// <summary>
+    /// Применить раскладку, выбранную в диалоге предложения.
+    /// </summary>
+    /// <param name="remember">Запомнить привязку для этой клавиатуры.</param>
+    [RelayCommand]
+    private void ApplyProposedLayout(bool remember)
+    {
+        InputDevice? target = _detectionService.Target;
+        KeyboardLayout layout = ProposedLayout;
+        _detectionService.Confirm(layout);
+
+        if (remember && target != null)
+        {
+            _deviceLayoutStore.SaveLayout(target.GetLayoutBindingKey(), layout);
+        }
+
+        ApplyLayoutProgrammatically(layout);
+        MaybeStopCapture();
+        _logger.LogInformation(
+            "Применена раскладка {Layout} из диалога предложения (запомнить: {Remember})",
+            layout,
+            remember);
+    }
+
+    /// <summary>
+    /// Отменить диалог предложения (без применения раскладки).
+    /// </summary>
+    [RelayCommand]
+    private void CancelProposal()
+    {
+        _detectionService.Cancel();
+        MaybeStopCapture();
+    }
+
     #endregion
 
     #region Events
@@ -354,6 +502,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// Запрос на открытие диалога "О программе".
     /// </summary>
     public event EventHandler? OpenAboutRequested;
+
+    /// <summary>
+    /// Запрос на открытие диалога предложения раскладки (v1.2.0).
+    /// </summary>
+    public event EventHandler? ProposalRequested;
 
     #endregion
 
@@ -376,10 +529,39 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    partial void OnIsDetectionWizardActiveChanged(bool value)
+    {
+        // Вычисляемое свойство IsDetectionActive зависит от этого флага.
+        OnPropertyChanged(nameof(IsDetectionActive));
+    }
+
     partial void OnSelectedLayoutChanged(KeyboardLayout value)
     {
         _statisticsEngine.SelectedLayout = value;
         RefreshLayout();
+
+        // Программное применение (стор/каталог/диалог) отличается от ручной
+        // смены пользователем: ручная смена при активном визарде отменяет
+        // визард, при выбранном устройстве — обновляет привязку в сторе.
+        if (_isApplyingLayout)
+        {
+            return;
+        }
+
+        if (_detectionService.IsActive)
+        {
+            _detectionService.Cancel();
+            SyncDetectionState();
+            MaybeStopCapture();
+        }
+        else if (SelectedKeyboard != null)
+        {
+            _deviceLayoutStore.SaveLayout(SelectedKeyboard.GetLayoutBindingKey(), value);
+            _logger.LogInformation(
+                "Привязка раскладки {Layout} обновлена вручную для {DeviceKey}",
+                value,
+                SelectedKeyboard.GetLayoutBindingKey());
+        }
     }
 
     partial void OnCurrentThemeChanged(AppTheme value)
@@ -392,6 +574,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (value != null)
         {
             _rawInputCapture.SelectDevice(value.DevicePath);
+            TryApplyLayoutForDevice(value);
         }
     }
 
@@ -415,6 +598,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _testSessionService.SessionStopped += OnSessionStopped;
         _testSessionService.DurationChanged += OnDurationChanged;
         _themeService.ThemeChanged += OnThemeChanged;
+        _detectionService.StateChanged += OnDetectionStateChanged;
     }
 
     private void UnsubscribeEvents()
@@ -430,10 +614,19 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _testSessionService.SessionStopped -= OnSessionStopped;
         _testSessionService.DurationChanged -= OnDurationChanged;
         _themeService.ThemeChanged -= OnThemeChanged;
+        _detectionService.StateChanged -= OnDetectionStateChanged;
     }
 
     private void OnKeyPressed(object? sender, RawKeyEventArgs e)
     {
+        // Нажатия целевого устройства визарда идут только в детекцию
+        // (маркерные и сопутствующие), ввод остальных устройств — в сессию.
+        if (_detectionService.IsActive && e.DevicePath == _detectionService.Target?.DevicePath)
+        {
+            _detectionService.HandleKeyPress(e);
+            return;
+        }
+
         var keyEvent = new KeyEvent(
             Guid.NewGuid(),
             e.VirtualKeyCode,
@@ -509,6 +702,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 ConnectedKeyboards.Add(device);
             }
+
+            // Если устройства ещё не выбраны — подключённое становится активным;
+            // автоприменение раскладки сработает из OnSelectedKeyboardChanged.
+            if (SelectedKeyboard == null)
+            {
+                SelectedKeyboard = device;
+                return;
+            }
+
+            TryApplyLayoutForDevice(device);
         });
     }
 
@@ -695,10 +898,101 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void MaybeStopCapture()
     {
-        if (!IsSessionRunning && !IsGhostingTestActive && _rawInputCapture.IsCapturing)
+        // Захват работает и во время визарда детекции — иначе маркеры
+        // не будут приходить вне тестовой сессии (план v1.2.0).
+        if (!IsSessionRunning && !IsGhostingTestActive && !_detectionService.IsActive && _rawInputCapture.IsCapturing)
         {
             _rawInputCapture.StopCapture();
         }
+    }
+
+    /// <summary>
+    /// Автоматически применяет раскладку для устройства: сохранённая привязка,
+    /// затем каталог топ-50; иначе запускает визард детекции (баннер).
+    /// </summary>
+    private void TryApplyLayoutForDevice(InputDevice device)
+    {
+        string key = device.GetLayoutBindingKey();
+
+        // 1. Сохранённая пользователем привязка применяется молча.
+        KeyboardLayout? saved = _deviceLayoutStore.GetSavedLayout(key);
+        if (saved != null)
+        {
+            ApplyLayoutProgrammatically(saved.Value);
+            DetectedKeyboardName = null;
+            return;
+        }
+
+        // 2. Каталог VID/PID: раскладка применяется и привязка сохраняется молча.
+        KnownKeyboard? known = device.VendorId != 0 || device.ProductId != 0
+            ? _keyboardCatalog.FindByVidPid(device.VendorId, device.ProductId)
+            : null;
+        if (known != null)
+        {
+            _deviceLayoutStore.SaveLayout(key, known.Layout);
+            ApplyLayoutProgrammatically(known.Layout);
+            DetectedKeyboardName = known.DisplayName;
+            _logger.LogInformation(
+                "Клавиатура распознана каталогом: {Keyboard} ({Layout})",
+                known.DisplayName,
+                known.Layout);
+            return;
+        }
+
+        // 3. Промах — визард автоопределения для этого устройства.
+        DetectedKeyboardName = null;
+        _detectionService.Start(device);
+        EnsureCaptureStarted();
+    }
+
+    /// <summary>
+    /// Применяет раскладку программно (без обработки как ручной смены).
+    /// </summary>
+    private void ApplyLayoutProgrammatically(KeyboardLayout layout)
+    {
+        if (SelectedLayout == layout)
+        {
+            return;
+        }
+
+        _isApplyingLayout = true;
+        try
+        {
+            SelectedLayout = layout;
+        }
+        finally
+        {
+            _isApplyingLayout = false;
+        }
+    }
+
+    /// <summary>
+    /// Синхронизирует observable-свойства детекции с состоянием сервиса.
+    /// </summary>
+    private void SyncDetectionState()
+    {
+        KeyboardDetectionState state = _detectionService.State;
+        IsDetectionWizardActive = state != KeyboardDetectionState.Idle;
+        DetectionWaitingNumpadEnter = state == KeyboardDetectionState.WaitingNumpadEnter;
+        DetectionWaitingLeftShift = state == KeyboardDetectionState.WaitingLeftShift;
+        IsProposalRequired = state == KeyboardDetectionState.Proposal;
+        NumpadEnterDetected = state is KeyboardDetectionState.WaitingLeftShift or KeyboardDetectionState.Proposal;
+        LeftShiftKeyDetected = state == KeyboardDetectionState.Proposal;
+
+        if (state != KeyboardDetectionState.Proposal)
+        {
+            return;
+        }
+
+        SuggestedLayout = _detectionService.SuggestedLayout;
+        ProposedLayout = _detectionService.SuggestedLayout ?? SelectedLayout;
+        RememberDeviceLayout = true;
+        ProposalRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnDetectionStateChanged(object? sender, EventArgs e)
+    {
+        Post(SyncDetectionState);
     }
 
     private static void TrimCollection<T>(ObservableCollection<T> collection, int maxCount)

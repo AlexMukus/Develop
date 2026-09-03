@@ -32,6 +32,7 @@ public partial class MainWindow : Window
 
         _viewModel.OpenSettingsRequested += OnOpenSettingsRequested;
         _viewModel.OpenAboutRequested += OnOpenAboutRequested;
+        _viewModel.ProposalRequested += OnProposalRequested;
         Closed += OnClosed;
     }
 
@@ -53,10 +54,26 @@ public partial class MainWindow : Window
         dialog.ShowDialog();
     }
 
+    private void OnProposalRequested(object? sender, EventArgs e)
+    {
+        // Диалог модальный: результат применяется командами ViewModel
+        // (ApplyProposedLayout/CancelProposal), окно лишь хостит его.
+        var dialog = new LayoutProposalDialog(_viewModel)
+        {
+            Owner = this,
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            _viewModel.CancelProposalCommand.Execute(null);
+        }
+    }
+
     private void OnClosed(object? sender, EventArgs e)
     {
         _viewModel.OpenSettingsRequested -= OnOpenSettingsRequested;
         _viewModel.OpenAboutRequested -= OnOpenAboutRequested;
+        _viewModel.ProposalRequested -= OnProposalRequested;
         _viewModel.Dispose();
     }
 }
