@@ -165,3 +165,13 @@ dotnet run --project src/KeyboardTester.UI/KeyboardTester.UI.csproj
 - `KeyboardTesterDevelopPlan.md` — актуальный план разработки и уточнённые требования по этапам.
 - `Release 1.1.0.md` — changelog текущей версии со ссылками на файлы.
 - `КлавТестер.docx` / `Требования к проекту КлавТестер.docx` (+ извлечённые `docx_content.txt`, `req_content.txt`) — исходные требования.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
